@@ -11,10 +11,11 @@ public class EBikeImpl implements EBike {
     public static final int MIN_LEVEL_BATTERY = 0;
     private final String id;
     private EBikeState state;
-    private int battery;
+    private final int battery;
 
-    private V2d direction;
     private Point2D position;
+    private V2d direction;
+    private float speed;
 
     public EBikeImpl(final String id) {
         this.id = id;
@@ -44,31 +45,25 @@ public class EBikeImpl implements EBike {
     }
 
     @Override
-    public void increaseBattery(final int amount) {
-        if (this.battery >= MAX_LEVEL_BATTERY) return;
-        this.battery += amount;
+    public void updatePosition(final Point2D position) {
+        this.position = position;
     }
 
     @Override
-    public void decreaseBattery(final int amount) {
-        if (this.battery <= MIN_LEVEL_BATTERY) return;
-        this.battery -= amount;
+    public boolean hire() {
+        if (this.state == EBikeState.FREE) {
+            this.state = EBikeState.IN_USE;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void setStateInUse() {
-        this.state = EBikeState.IN_USE;
-    }
-
-    @Override
-    public void setStateFree() {
+    public void stopRide() {
         this.state = EBikeState.FREE;
+        this.speed = 0;
     }
 
-    @Override
-    public void setStateLowBattery() {
-        this.state = EBikeState.LOW_BATTERY;
-    }
 
     @Override
     public int hashCode() {

@@ -8,12 +8,7 @@ public interface EBike {
     int battery();
     Point2D position();
 
-
-
-    void increaseBattery(int amount);
-    void decreaseBattery(int amount);
-
-    void setStateInUse();
-    void setStateFree();
-    void setStateLowBattery();
+    boolean hire();
+    void updatePosition(Point2D position);
+    void stopRide();
 }
