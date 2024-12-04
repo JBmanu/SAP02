@@ -7,12 +7,13 @@ import java.util.Optional;
 
 public interface UserRepositoryPort {
     Optional<ErrorApplication> signUp(String username, String password);
-
     Optional<ErrorApplication> signIn(String username, String password);
+    Optional<ErrorApplication> addCreditsTo(String username, float someCredits);
 
     boolean contain(String username);
 
-    float creditsOf(String username);
+    Optional<Float> creditsOf(String username);
+
 
     class UserRepositoryPortImpl implements UserRepositoryPort {
         private final UserRepository userRepository;
@@ -42,13 +43,22 @@ public interface UserRepositoryPort {
         }
 
         @Override
+        public Optional<ErrorApplication> addCreditsTo(final String username, final float someCredits) {
+            if (someCredits < 0) return Optional.of(ErrorApplication.ADD_NEGATIVE_CREDITS);
+            if (someCredits == 0) return Optional.of(ErrorApplication.ADD_ZERO_CREDITS);
+            if (!this.userRepository.addCreditsTo(username, someCredits))
+                return Optional.of(ErrorApplication.NOT_LOGGED);
+            return Optional.empty();
+        }
+
+        @Override
         public boolean contain(final String username) {
             return this.userRepository.contains(username);
         }
 
         @Override
-        public float creditsOf(final String username) {
-            return this.userRepository.creditsOf(username).orElse(0f);
+        public Optional<Float> creditsOf(final String username) {
+            return this.userRepository.creditsOf(username);
         }
     }
 }

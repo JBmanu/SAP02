@@ -10,8 +10,13 @@ public interface Application {
 
     Optional<ErrorApplication> signUp(String username, String password);
     Optional<ErrorApplication> signIn(String username, String password);
+    Optional<ErrorApplication> addCreditsTo(float someCredits);
+
+    Optional<Float> creditsOfUser();
+
 
     boolean containUser(String username);
 
     boolean userIsLogged();
+
 }

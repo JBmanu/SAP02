@@ -3,7 +3,6 @@ package application.concreate;
 import application.*;
 import entity.User;
 import entity.UserFactory;
-import entity.UserRepository;
 
 import java.util.Optional;
 
@@ -41,8 +40,7 @@ public class ApplicationImpl implements Application {
     private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {
         if (this.userRepository.isEmpty() || error.isPresent()) return;
         final UserFactory userFactory = new UserFactory.SimpleFactory();
-        final float credits = this.userRepository.get().creditsOf(username);
-        this.user = Optional.of(userFactory.createWithCredit(username, password, credits));
+        this.user = Optional.of(userFactory.createWithoutCredit(username, password));
     }
 
     @Override
@@ -62,7 +60,22 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
+    public Optional<ErrorApplication> addCreditsTo(final float someCredits) {
+        return this.user.isPresent() && this.userRepository.isPresent() ?
+                this.userRepository.get().addCreditsTo(this.user.get().username(), someCredits) : Optional.empty();
+    }
+
+    @Override
+    public Optional<Float> creditsOfUser() {
+        return this.user
+                .flatMap(userLogged -> this.userRepository.map(repository ->
+                        repository.creditsOf(userLogged.username())))
+                .orElse(Optional.empty());
+    }
+
+    @Override
     public boolean containUser(final String username) {
+        // da rivedere o togliere
         return this.userRepository.isPresent() && this.userRepository.get().contain(username);
     }
 
@@ -70,4 +83,6 @@ public class ApplicationImpl implements Application {
     public boolean userIsLogged() {
         return this.user.isPresent();
     }
+
+
 }
