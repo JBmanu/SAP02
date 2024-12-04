@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SignIn {
     public static final String EMPTY_FIELD = "";
-    private final UserRepositoryPort repositoryPort = new UserRepositoryPort.UserRepositoryPortImpl();
+    private final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
     private Application application = new ApplicationImpl();
 
     @Before

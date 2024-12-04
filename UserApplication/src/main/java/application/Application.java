@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface Application {
 
     void setEbikeController(EbikeControllerPort ebikeController);
-    void setUserRepository(UserRepositoryPort userRepository);
+    void setUserRepository(RepositoryPort userRepository);
     void setUserView(UserViewPort userView);
 
     Optional<ErrorApplication> signUp(String username, String password);

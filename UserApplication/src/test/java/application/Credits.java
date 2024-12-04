@@ -14,7 +14,7 @@ public class Credits {
 
     @Given("The user {string} has sign in with password {string}")
     public void theUserHasSignIn(final String username, final String password) {
-        final UserRepositoryPort repositoryPort = new UserRepositoryPort.UserRepositoryPortImpl();
+        final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
         this.application = new ApplicationImpl();
         this.application.setUserRepository(repositoryPort);
         this.application.signUp(username, password);

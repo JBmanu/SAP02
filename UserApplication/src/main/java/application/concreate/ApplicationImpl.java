@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class ApplicationImpl implements Application {
     private Optional<EbikeControllerPort> ebikeController;
-    private Optional<UserRepositoryPort> userRepository;
+    private Optional<RepositoryPort> userRepository;
     private Optional<UserViewPort> userView;
 
     private Optional<User> user;
@@ -29,7 +29,7 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
-    public void setUserRepository(final UserRepositoryPort userRepository) {
+    public void setUserRepository(final RepositoryPort userRepository) {
         this.userRepository = Optional.ofNullable(userRepository);
     }
 

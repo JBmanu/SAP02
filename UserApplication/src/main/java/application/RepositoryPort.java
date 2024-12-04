@@ -1,11 +1,13 @@
 package application;
 
+import entity.ebike.EBikeRepository;
+import entity.ebike.concreate.EBikeRepositoryImpl;
 import entity.user.UserRepository;
 import entity.user.concreate.UserRepositoryImpl;
 
 import java.util.Optional;
 
-public interface UserRepositoryPort {
+public interface RepositoryPort {
     Optional<ErrorApplication> signUp(String username, String password);
     Optional<ErrorApplication> signIn(String username, String password);
     Optional<ErrorApplication> addCreditsTo(String username, float someCredits);
@@ -15,15 +17,18 @@ public interface UserRepositoryPort {
     Optional<Float> creditsOf(String username);
 
 
-    class UserRepositoryPortImpl implements UserRepositoryPort {
+    class RepositoryPortImpl implements RepositoryPort {
         private final UserRepository userRepository;
+        private final EBikeRepository ebikeRepository;
 
-        public UserRepositoryPortImpl() {
+        public RepositoryPortImpl() {
             this.userRepository = new UserRepositoryImpl();
+            this.ebikeRepository = new EBikeRepositoryImpl();
         }
 
-        public UserRepositoryPortImpl(final UserRepository userRepository) {
+        public RepositoryPortImpl(final UserRepository userRepository, final EBikeRepository ebikeRepository) {
             this.userRepository = userRepository;
+            this.ebikeRepository = ebikeRepository;
         }
 
         @Override

@@ -16,7 +16,7 @@ public class SignUp {
 
     @Given("The user is not registered")
     public void theUserIsNotRegistered() {
-        final UserRepositoryPort repositoryPort = new UserRepositoryPort.UserRepositoryPortImpl();
+        final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
         this.application = new ApplicationImpl();
         this.application.setUserRepository(repositoryPort);
     }
