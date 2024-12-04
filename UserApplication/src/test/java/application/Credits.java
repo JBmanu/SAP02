@@ -14,8 +14,9 @@ public class Credits {
 
     @Given("The user {string} has sign in with password {string}")
     public void theUserHasSignIn(final String username, final String password) {
-        final Optional<UserRepositoryPort> repositoryPort = Optional.of(new UserRepositoryPort.UserRepositoryPortImpl());
-        this.application = new ApplicationImpl(Optional.empty(), repositoryPort, Optional.empty());
+        final UserRepositoryPort repositoryPort = new UserRepositoryPort.UserRepositoryPortImpl();
+        this.application = new ApplicationImpl();
+        this.application.setUserRepository(repositoryPort);
         this.application.signUp(username, password);
         assertTrue(this.application.userIsLogged());
         assertEquals(0f, this.application.creditsOfUser().get());

@@ -22,6 +22,10 @@ public interface UserRepositoryPort {
             this.userRepository = new UserRepositoryImpl();
         }
 
+        public UserRepositoryPortImpl(final UserRepository userRepository) {
+            this.userRepository = userRepository;
+        }
+
         @Override
         public Optional<ErrorApplication> signUp(final String username, final String password) {
             final boolean emptyFields = username.isBlank() || password.isBlank();

@@ -1,6 +1,7 @@
 package application;
 
 import application.concreate.ApplicationImpl;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,10 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SignIn {
     public static final String EMPTY_FIELD = "";
-    private final Optional<UserRepositoryPort> repositoryPort = Optional.of(new UserRepositoryPort.UserRepositoryPortImpl());
-    private final Application application = new ApplicationImpl(
-            Optional.empty(), this.repositoryPort, Optional.empty());
+    private final UserRepositoryPort repositoryPort = new UserRepositoryPort.UserRepositoryPortImpl();
+    private Application application = new ApplicationImpl();
 
+    @Before
+    public void setup() {
+        this.application = new ApplicationImpl();
+        this.application.setUserRepository(this.repositoryPort);
+    }
 
     @Given("The user {string} is not registered")
     public void theUserIsNotRegistered(final String username) {
@@ -37,6 +42,7 @@ public class SignIn {
         final Optional<ErrorApplication> error = this.application.signUp(username, password);
         assertTrue(error.isEmpty());
         assertTrue(this.application.isRegistered(username));
+        this.application.logout();
     }
 
     @When("The user {string} sign in with wrong password {string}")

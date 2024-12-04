@@ -13,28 +13,26 @@ public class ApplicationImpl implements Application {
 
     private Optional<User> user;
 
-    public ApplicationImpl(final Optional<EbikeControllerPort> ebikeController,
-                           final Optional<UserRepositoryPort> userRepository,
-                           final Optional<UserViewPort> userView) {
-        this.ebikeController = ebikeController;
-        this.userRepository = userRepository;
-        this.userView = userView;
+    public ApplicationImpl() {
+        this.ebikeController = Optional.empty();
+        this.userRepository = Optional.empty();
+        this.userView = Optional.empty();
         this.user = Optional.empty();
     }
 
     @Override
-    public void setEbikeController(final Optional<EbikeControllerPort> ebikeController) {
-        this.ebikeController = ebikeController;
+    public void setEbikeController(final EbikeControllerPort ebikeController) {
+        this.ebikeController = Optional.ofNullable(ebikeController);
     }
 
     @Override
-    public void setUserRepository(final Optional<UserRepositoryPort> userRepository) {
-        this.userRepository = userRepository;
+    public void setUserRepository(final UserRepositoryPort userRepository) {
+        this.userRepository = Optional.ofNullable(userRepository);
     }
 
     @Override
-    public void setUserView(final Optional<UserViewPort> userView) {
-        this.userView = userView;
+    public void setUserView(final UserViewPort userView) {
+        this.userView = Optional.ofNullable(userView);
     }
 
     private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {
@@ -48,6 +46,7 @@ public class ApplicationImpl implements Application {
         final Optional<ErrorApplication> error = this.userRepository.isPresent() ?
                 this.userRepository.get().signUp(username, password) : Optional.empty();
         this.userLogged(error, username, password);
+        this.userView.ifPresent(view -> view.showError(error));
         return error;
     }
 
@@ -56,13 +55,16 @@ public class ApplicationImpl implements Application {
         final Optional<ErrorApplication> error = this.userRepository.isPresent() ?
                 this.userRepository.get().signIn(username, password) : Optional.empty();
         this.userLogged(error, username, password);
+        this.userView.ifPresent(view -> view.showError(error));
         return error;
     }
 
     @Override
     public Optional<ErrorApplication> addCreditsTo(final float someCredits) {
-        return this.user.isPresent() && this.userRepository.isPresent() ?
+        final Optional<ErrorApplication> error = this.user.isPresent() && this.userRepository.isPresent() ?
                 this.userRepository.get().addCreditsTo(this.user.get().username(), someCredits) : Optional.empty();
+        this.userView.ifPresent(view -> view.showError(error));
+        return error;
     }
 
     @Override
@@ -83,5 +85,9 @@ public class ApplicationImpl implements Application {
         return this.user.isPresent();
     }
 
+    @Override
+    public void logout() {
+        this.user = Optional.empty();
+    }
 
 }
