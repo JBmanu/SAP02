@@ -38,21 +38,26 @@ public class ApplicationImpl implements Application {
         this.userView = userView;
     }
 
+    private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {
+        if (this.userRepository.isEmpty() || error.isPresent()) return;
+        final UserFactory userFactory = new UserFactory.SimpleFactory();
+        final float credits = this.userRepository.get().creditsOf(username);
+        this.user = Optional.of(userFactory.createWithCredit(username, password, credits));
+    }
+
     @Override
     public Optional<ErrorApplication> signUp(final String username, final String password) {
-        return this.userRepository.isPresent() ?
+        final Optional<ErrorApplication> error = this.userRepository.isPresent() ?
                 this.userRepository.get().signUp(username, password) : Optional.empty();
+        this.userLogged(error, username, password);
+        return error;
     }
 
     @Override
     public Optional<ErrorApplication> signIn(final String username, final String password) {
         final Optional<ErrorApplication> error = this.userRepository.isPresent() ?
                 this.userRepository.get().signIn(username, password) : Optional.empty();
-        if (this.userRepository.isPresent() && error.isEmpty()) {
-            final UserFactory userFactory = new UserFactory.SimpleFactory();
-            final float credits = this.userRepository.get().creditsOf(username);
-            this.user = Optional.of(userFactory.createWithCredit(username, password, credits));
-        }
+        this.userLogged(error, username, password);
         return error;
     }
 

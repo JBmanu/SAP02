@@ -48,6 +48,7 @@ public class SignUp {
     @Then("The system register user {string}, and user access to the service")
     public void theSystemRegisterUserAndUserAccessToTheService(final String username) {
         assertTrue(this.application.containUser(username));
+        assertTrue(this.application.userIsLogged());
     }
 
 
