@@ -2,6 +2,9 @@ package entity.ebike.concreate;
 
 import entity.ebike.EBike;
 import entity.ebike.EBikeState;
+import entity.ebike.V2d;
+
+import java.awt.geom.Point2D;
 
 public class EBikeImpl implements EBike {
     public static final int MAX_LEVEL_BATTERY = 100;
@@ -10,10 +13,14 @@ public class EBikeImpl implements EBike {
     private EBikeState state;
     private int battery;
 
+    private V2d direction;
+    private Point2D position;
+
     public EBikeImpl(final String id) {
         this.id = id;
         this.state = EBikeState.FREE;
         this.battery = MAX_LEVEL_BATTERY;
+        this.position = new Point2D.Float(0, 0);
     }
 
     @Override
@@ -29,6 +36,11 @@ public class EBikeImpl implements EBike {
     @Override
     public int battery() {
         return this.battery;
+    }
+
+    @Override
+    public Point2D position() {
+        return this.position;
     }
 
     @Override
