@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class UserRepositoryTest {
     private final UserFactory userFactory = new UserFactory.SimpleFactory();
@@ -26,7 +26,7 @@ public class UserRepositoryTest {
     @Test
     public void addUsers() {
         final User userTest = this.userFactory.createTest();
-        this.userRepository.add(userTest);
+        assertTrue(this.userRepository.add(userTest));
         assertEquals(1, this.userRepository.count());
         assertEquals(Optional.of(userTest), this.userRepository.userOf(userTest.username()));
     }
@@ -35,8 +35,7 @@ public class UserRepositoryTest {
     public void removeUsers() {
         final User user = this.userFactory.createTest();
         this.userRepository.add(user);
-        assertEquals(1, this.userRepository.count());
-        this.userRepository.remove(user.username());
+        assertTrue(this.userRepository.remove(user.username()));
         assertEquals(0, this.userRepository.count());
     }
 
@@ -44,7 +43,6 @@ public class UserRepositoryTest {
     public void containsUser() {
         final User user = this.userFactory.createTest();
         this.userRepository.add(user);
-        assertEquals(1, this.userRepository.count());
         assertTrue(this.userRepository.contains(user.username()));
     }
 
@@ -52,9 +50,7 @@ public class UserRepositoryTest {
     public void addSameUser() {
         final User user = this.userFactory.createTest();
         this.userRepository.add(user);
-        assertEquals(1, this.userRepository.count());
-        this.userRepository.add(user);
-        assertEquals(1, this.userRepository.count());
+        assertFalse(this.userRepository.add(user));
     }
 
     @Test
@@ -68,8 +64,7 @@ public class UserRepositoryTest {
         final User user = this.userFactory.createTest();
         final float credits = 100f;
         this.userRepository.add(user);
-        this.userRepository.addCreditsTo(user.username(), credits);
-        assertEquals(1, this.userRepository.count());
+        assertTrue(this.userRepository.addCreditsTo(user.username(), credits));
         assertEquals(Optional.of(credits), this.userRepository.creditsOf(user.username()));
     }
 

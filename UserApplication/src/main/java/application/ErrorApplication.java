@@ -1,6 +1,6 @@
 package application;
 
 public enum ErrorApplication {
-    USERNAME
+    EMPTY_FIELD, SAME_USERNAME
 
 }

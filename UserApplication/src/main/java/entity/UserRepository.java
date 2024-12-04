@@ -6,11 +6,13 @@ public interface UserRepository {
     int count();
 
 
-    void add(User user);
+    boolean add(User user);
 
-    void remove(String username);
+    boolean add(String username, String password);
 
-    void addCreditsTo(String username, float amount);
+    boolean remove(String username);
+
+    boolean addCreditsTo(String username, float amount);
 
 
     boolean contains(String username);

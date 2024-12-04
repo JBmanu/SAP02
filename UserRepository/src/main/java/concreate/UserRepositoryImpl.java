@@ -1,15 +1,18 @@
 package concreate;
 
 import domain.User;
+import domain.UserFactory;
 import domain.UserRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
+    private final UserFactory userFactory;
     private final HashSet<User> users;
 
     public UserRepositoryImpl() {
+        this.userFactory = new UserFactory.SimpleFactory();
         this.users = new HashSet<>();
     }
 
@@ -19,20 +22,26 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void add(final User user) {
-        this.users.add(user);
+    public boolean add(final User user) {
+        return this.users.add(user);
     }
 
     @Override
-    public void remove(final String username) {
-        this.users.removeIf(user -> user.username().equals(username));
+    public boolean add(final String username, final String password) {
+        return this.users.add(this.userFactory.createWithoutCredit(username, password));
     }
 
     @Override
-    public void addCreditsTo(final String username, final float amount) {
+    public boolean remove(final String username) {
+        return this.users.removeIf(user -> user.username().equals(username));
+    }
+
+    @Override
+    public boolean addCreditsTo(final String username, final float amount) {
         this.users.stream()
                 .filter(user -> user.username().equals(username))
                 .forEach(user -> user.addCredits(amount));
+        return this.contains(username);
     }
 
     @Override
