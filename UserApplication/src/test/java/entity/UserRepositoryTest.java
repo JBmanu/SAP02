@@ -75,4 +75,13 @@ public class UserRepositoryTest {
         assertEquals(Optional.empty(), this.userRepository.creditsOf(user.username()));
     }
 
+    @Test
+    public void checkPassword() {
+        final String username = "Manuel";
+        final String password = "password";
+        final User user = this.userFactory.createWithoutCredit(username, password);
+        this.userRepository.add(user);
+        assertTrue(this.userRepository.checkPasswordOf(username, password));
+    }
+
 }

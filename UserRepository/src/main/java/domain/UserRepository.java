@@ -21,4 +21,5 @@ public interface UserRepository {
 
     Optional<Float> creditsOf(String username);
 
+    boolean checkPasswordOf(String username, String password);
 }

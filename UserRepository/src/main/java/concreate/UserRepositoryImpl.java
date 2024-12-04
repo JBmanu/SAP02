@@ -62,4 +62,11 @@ public class UserRepositoryImpl implements UserRepository {
                 .filter(user -> user.username().equals(username))
                 .findFirst().map(User::credits);
     }
+
+    @Override
+    public boolean checkPasswordOf(final String username, final String password) {
+        return this.users.stream().anyMatch(user -> user.username().equals(username)
+                && user.password().equals(password));
+
+    }
 }
