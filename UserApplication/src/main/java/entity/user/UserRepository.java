@@ -1,4 +1,4 @@
-package entity;
+package entity.user;
 
 import java.util.Optional;
 

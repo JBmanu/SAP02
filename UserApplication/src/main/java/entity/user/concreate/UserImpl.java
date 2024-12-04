@@ -1,6 +1,6 @@
-package entity.concreate;
+package entity.user.concreate;
 
-import entity.User;
+import entity.user.User;
 
 public class UserImpl implements User {
     private record DataUser(String username, String password, float credits) { }

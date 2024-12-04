@@ -1,5 +1,7 @@
 package entity;
 
+import entity.user.User;
+import entity.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

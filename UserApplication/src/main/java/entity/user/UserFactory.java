@@ -1,6 +1,6 @@
-package entity;
+package entity.user;
 
-import entity.concreate.UserImpl;
+import entity.user.concreate.UserImpl;
 
 public interface UserFactory {
     User createTest();

@@ -1,8 +1,9 @@
 package application.concreate;
 
 import application.*;
-import entity.User;
-import entity.UserFactory;
+import entity.ebike.EBike;
+import entity.user.User;
+import entity.user.UserFactory;
 
 import java.util.Optional;
 
@@ -12,12 +13,14 @@ public class ApplicationImpl implements Application {
     private Optional<UserViewPort> userView;
 
     private Optional<User> user;
+    private Optional<EBike> ebike;
 
     public ApplicationImpl() {
         this.ebikeController = Optional.empty();
         this.userRepository = Optional.empty();
         this.userView = Optional.empty();
         this.user = Optional.empty();
+        this.ebike = Optional.empty();
     }
 
     @Override

@@ -1,8 +1,8 @@
-package entity.concreate;
+package entity.user.concreate;
 
-import entity.User;
-import entity.UserFactory;
-import entity.UserRepository;
+import entity.user.User;
+import entity.user.UserFactory;
+import entity.user.UserRepository;
 
 import java.util.HashSet;
 import java.util.Optional;

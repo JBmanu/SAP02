@@ -1,7 +1,7 @@
 package application;
 
-import entity.UserRepository;
-import entity.concreate.UserRepositoryImpl;
+import entity.user.UserRepository;
+import entity.user.concreate.UserRepositoryImpl;
 
 import java.util.Optional;
 

@@ -3,8 +3,8 @@ import adapter.View;
 import application.Application;
 import application.UserRepositoryPort;
 import application.concreate.ApplicationImpl;
-import entity.UserRepository;
-import entity.concreate.UserRepositoryImpl;
+import entity.user.UserRepository;
+import entity.user.concreate.UserRepositoryImpl;
 import framework.view.ViewImpl;
 
 public final class Launcher {

@@ -1,6 +1,7 @@
 package entity;
 
-import entity.concreate.UserImpl;
+import entity.user.concreate.UserImpl;
+import entity.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
