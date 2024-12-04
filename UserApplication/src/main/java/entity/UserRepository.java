@@ -14,6 +14,7 @@ public interface UserRepository {
 
     boolean addCreditsTo(String username, float amount);
 
+    boolean checkPasswordOf(String username, String password);
 
     boolean contains(String username);
 

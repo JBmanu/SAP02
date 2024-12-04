@@ -1,6 +1,9 @@
 package application.concreate;
 
 import application.*;
+import entity.User;
+import entity.UserFactory;
+import entity.UserRepository;
 
 import java.util.Optional;
 
@@ -9,12 +12,15 @@ public class ApplicationImpl implements Application {
     private Optional<UserRepositoryPort> userRepository;
     private Optional<UserViewPort> userView;
 
+    private Optional<User> user;
+
     public ApplicationImpl(final Optional<EbikeControllerPort> ebikeController,
                            final Optional<UserRepositoryPort> userRepository,
                            final Optional<UserViewPort> userView) {
         this.ebikeController = ebikeController;
         this.userRepository = userRepository;
         this.userView = userView;
+        this.user = Optional.empty();
     }
 
     @Override
@@ -39,7 +45,24 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
+    public Optional<ErrorApplication> signIn(final String username, final String password) {
+        final Optional<ErrorApplication> error = this.userRepository.isPresent() ?
+                this.userRepository.get().signIn(username, password) : Optional.empty();
+        if (this.userRepository.isPresent() && error.isEmpty()) {
+            final UserFactory userFactory = new UserFactory.SimpleFactory();
+            final float credits = this.userRepository.get().creditsOf(username);
+            this.user = Optional.of(userFactory.createWithCredit(username, password, credits));
+        }
+        return error;
+    }
+
+    @Override
     public boolean containUser(final String username) {
         return this.userRepository.isPresent() && this.userRepository.get().contain(username);
+    }
+
+    @Override
+    public boolean userIsLogged() {
+        return this.user.isPresent();
     }
 }
