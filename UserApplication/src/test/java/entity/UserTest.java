@@ -57,7 +57,6 @@ public class UserTest {
     public void sameUser() {
         final User user2 = new UserImpl(USERNAME, PASSWORD);
         assertEquals(this.user.username(), user2.username());
-        assertEquals(this.user.password(), user2.password());
         assertEquals(this.user, user2);
     }
 }

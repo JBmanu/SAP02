@@ -44,7 +44,13 @@ public class UserImpl implements User {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof final UserImpl user && this.dataUser.username().equals(user.dataUser.username());
+    public int hashCode() {
+        return this.username().hashCode();
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof final User user && this.dataUser.username().equals(user.username());
+    }
+
 }

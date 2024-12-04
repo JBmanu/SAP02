@@ -34,10 +34,8 @@ public class ApplicationImpl implements Application {
 
     @Override
     public Optional<ErrorApplication> signUp(final String username, final String password) {
-        Optional<ErrorApplication> error = Optional.empty();
-        if (this.userRepository.isPresent())
-            error = this.userRepository.get().signUp(username, password);
-        return error;
+        return this.userRepository.isPresent() ?
+                this.userRepository.get().signUp(username, password) : Optional.empty();
     }
 
     @Override

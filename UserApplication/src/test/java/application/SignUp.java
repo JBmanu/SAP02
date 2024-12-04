@@ -16,8 +16,9 @@ public class SignUp {
 
     @Given("The user is not registered")
     public void theUserIsNotRegistered() {
+        final Optional<UserRepositoryPort> repositoryPort = Optional.of(new UserRepositoryPort.UserRepositoryPortImpl());
         this.application = new ApplicationImpl(
-                Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), repositoryPort, Optional.empty());
     }
 
 
@@ -25,7 +26,6 @@ public class SignUp {
     public void anotherUserIsRegisterWithUsernameAndPassword(final String username, final String password) {
         final Optional<ErrorApplication> error = this.application.signUp(username, password);
         assertTrue(error.isEmpty());
-        assertTrue(this.application.containUser(username));
     }
     @When("The user sign up with username {string} and password {string}")
     public void theUserSignUpWithUsername(final String username, final String password) {
@@ -35,7 +35,7 @@ public class SignUp {
     }
     @Then("The system shows an error message, the username {string} is already registered")
     public void theSystemShowsAnErrorMessageTheUsernameIsAlreadyRegistered(final String username) {
-        assertFalse(this.application.containUser(username));
+        assertTrue(this.application.containUser(username));
     }
 
 

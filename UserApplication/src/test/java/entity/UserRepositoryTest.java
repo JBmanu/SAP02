@@ -49,8 +49,9 @@ public class UserRepositoryTest {
     @Test
     public void addSameUser() {
         final User user = this.userFactory.createTest();
+        final User user1 = this.userFactory.createTest();
         this.userRepository.add(user);
-        assertFalse(this.userRepository.add(user));
+        assertFalse(this.userRepository.add(user1));
     }
 
     @Test

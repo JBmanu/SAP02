@@ -19,12 +19,11 @@ public interface UserRepositoryPort {
 
         @Override
         public Optional<ErrorApplication> signUp(final String username, final String password) {
-            final Optional<ErrorApplication> error = this.contain(username) ?
-                    Optional.of(ErrorApplication.SAME_USERNAME) : Optional.empty();
-            if (error.isEmpty())
-                this.userRepository.add(username, password);
-
-            return error;
+            final boolean emptyFields = username.isBlank() || password.isBlank();
+            if (emptyFields)
+                return Optional.of(ErrorApplication.EMPTY_FIELD);
+            return this.userRepository.add(username, password)?
+                    Optional.empty() : Optional.of(ErrorApplication.SAME_USERNAME);
         }
 
         @Override
