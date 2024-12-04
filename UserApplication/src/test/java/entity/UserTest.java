@@ -1,10 +1,10 @@
 package entity;
 
-import concreate.UserImpl;
-import domain.User;
+import entity.concreate.UserImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserTest {

@@ -1,6 +1,5 @@
 package application;
 
-import entity.User;
 import implementation.ApplicationImpl;
 import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
