@@ -35,7 +35,7 @@ public class SignUp {
     }
     @Then("The system shows an error message, the username {string} is already registered")
     public void theSystemShowsAnErrorMessageTheUsernameIsAlreadyRegistered(final String username) {
-        assertTrue(this.application.containUser(username));
+        assertTrue(this.application.isRegistered(username));
     }
 
 
@@ -43,11 +43,10 @@ public class SignUp {
     public void theUserSignUpWithCorrectUsernameAndPassword(final String username, final String password) {
         final Optional<ErrorApplication> error = this.application.signUp(username, password);
         assertTrue(error.isEmpty());
-        assertTrue(this.application.containUser(username));
     }
     @Then("The system register user {string}, and user access to the service")
     public void theSystemRegisterUserAndUserAccessToTheService(final String username) {
-        assertTrue(this.application.containUser(username));
+        assertTrue(this.application.isRegistered(username));
         assertTrue(this.application.userIsLogged());
     }
 
@@ -60,7 +59,7 @@ public class SignUp {
     }
     @Then("The system shows an error message, the username or password is empty")
     public void theSystemShowsAnErrorMessageTheUsernameOrPasswordIsEmpty() {
-        assertFalse(this.application.containUser(EMPTY_FIELD));
+        assertFalse(this.application.isRegistered(EMPTY_FIELD));
     }
 
 

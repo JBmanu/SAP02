@@ -14,8 +14,7 @@ public interface Application {
 
     Optional<Float> creditsOfUser();
 
-
-    boolean containUser(String username);
+    boolean isRegistered(String username);
 
     boolean userIsLogged();
 

@@ -18,7 +18,7 @@ public class SignIn {
 
     @Given("The user {string} is not registered")
     public void theUserIsNotRegistered(final String username) {
-        assertFalse(this.application.containUser(username));
+        assertFalse(this.application.isRegistered(username));
     }
     @When("The user {string} sign in with wrong username and {string} as password")
     public void theUserSignInWithWrongUsername(final String username, final String password) {
@@ -28,7 +28,7 @@ public class SignIn {
     }
     @Then("The system shows an error message, the user {string} is not registered")
     public void theSystemShowsAnErrorMessageTheUserIsNotRegistered(final String username) {
-        assertFalse(this.application.containUser(username));
+        assertFalse(this.application.isRegistered(username));
     }
 
 
@@ -36,7 +36,7 @@ public class SignIn {
     public void theUserIsRegistered(final String username, final String password) {
         final Optional<ErrorApplication> error = this.application.signUp(username, password);
         assertTrue(error.isEmpty());
-        assertTrue(this.application.containUser(username));
+        assertTrue(this.application.isRegistered(username));
     }
 
     @When("The user {string} sign in with wrong password {string}")
