@@ -19,11 +19,14 @@ public interface UserViewEventPort {
 
     String onHireEBike(String eBikeId);
 
+    void onStopHireEBike();
+
     void onLogout();
 
     float credits();
 
     boolean canHireEBike();
+
 
 
     class UserViewEventPortImpl implements UserViewEventPort {
@@ -62,6 +65,11 @@ public interface UserViewEventPort {
         }
 
         @Override
+        public void onStopHireEBike() {
+            this.application.stopEBike();
+        }
+
+        @Override
         public Collection<String> eBikesFree() {
             return this.application.eBikesIdFree();
         }
@@ -80,5 +88,7 @@ public interface UserViewEventPort {
         public boolean canHireEBike() {
             return !this.application.hasHireEBike();
         }
+
+
     }
 }

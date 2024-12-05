@@ -1,7 +1,8 @@
 package framework.view;
 
+import adapter.UserViewEventPort;
+
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -12,15 +13,17 @@ public class HirePanel extends JPanel {
     public static final String CURRENCY = "€";
     public static final String HIRE = "Hire";
     public static final String ADD_CREDITS = "Add Credits";
+    public static final String STOP_HIRE = "Stop Hire";
 
     private final ListenerHireEvent listenerHireEvent;
     private final JLabel usernameValue;
     private final JLabel creditsValue;
     private final JTextField creditsField;
-    private final JButton hireButton;
 
     private final JPopupMenu eBikesIdFreePopupMenu;
     private final JScrollPane scrollPane;
+    private final JButton hireButton;
+    private final JButton stopHireButton;
 
     public HirePanel(final ListenerHireEvent listenerHireEvent) {
         this.setSize(800, 200);
@@ -45,6 +48,9 @@ public class HirePanel extends JPanel {
         this.eBikesIdFreePopupMenu = new JPopupMenu();
         this.eBikesIdFreePopupMenu.add(this.scrollPane);
 
+        this.stopHireButton = new JButton(STOP_HIRE);
+        this.stopHireButton.setVisible(false);
+        this.stopHireButton.addActionListener(e -> this.stopHireEBike());
 
         final JButton signOutButton = new JButton(LOGOUT);
         signOutButton.addActionListener(e -> this.onClickLogout());
@@ -57,6 +63,7 @@ public class HirePanel extends JPanel {
         topPanel.add(addCreditsButton);
         topPanel.add(this.creditsField);
         topPanel.add(signOutButton);
+        topPanel.add(this.stopHireButton);
         topPanel.add(this.hireButton);
         topPanel.add(this.eBikesIdFreePopupMenu);
 
@@ -84,8 +91,20 @@ public class HirePanel extends JPanel {
         this.eBikesIdFreePopupMenu.setVisible(true);
         list.addListSelectionListener(e -> {
             final String eBikeId = list.getSelectedValue();
-            TimedMessageDialog.showTimedMessage(this.listenerHireEvent.onClickHire(eBikeId), 500);
+            final String message = this.listenerHireEvent.onClickHire(eBikeId);
+            if (message.equals(UserViewEventPort.CORRECT)) {
+                this.hireButton.setVisible(false);
+                this.stopHireButton.setVisible(true);
+            }
+            TimedMessageDialog.showTimedMessage(message, 500);
         });
+    }
+
+    private void stopHireEBike() {
+        this.stopHireButton.setVisible(false);
+        this.hireButton.setVisible(true);
+        this.listenerHireEvent.onStopHireEBike();
+        TimedMessageDialog.showTimedMessage("Stop ride ebike", 500);
     }
 
     private void onClickLogout() {
