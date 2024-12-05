@@ -59,8 +59,7 @@ public class LoginPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             final String username = this.usernameField.getText();
             final String password = new String(this.passwordField.getPassword());
-            TimedMessageDialog.showTimedMessage(
-                    this.listenerHireEvent.onClickSignUp(username, password), 1000);
+            this.listenerHireEvent.onClickSignUp(username, password);
         });
     }
 
@@ -68,8 +67,7 @@ public class LoginPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             final String username = this.usernameField.getText();
             final String password = new String(this.passwordField.getPassword());
-            TimedMessageDialog.showTimedMessage(
-                    this.listenerHireEvent.onClickSignIn(username, password), 1000);
+            this.listenerHireEvent.onClickSignIn(username, password);
         });
     }
 }

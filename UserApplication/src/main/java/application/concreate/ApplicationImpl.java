@@ -107,6 +107,7 @@ public class ApplicationImpl implements Application {
         final Optional<ErrorApplication> error = this.repository.isPresent() && this.user.isPresent() ?
                 this.repository.get().hireEBike(this.user.get().username(), eBikeId, CREDITS_FOR_HIRE) :
                 Optional.of(ErrorApplication.NOT_CONNECTED);
+        this.view.ifPresent(view -> view.showError(error));
         if (error.isEmpty()) {
             final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();
             this.ebike = Optional.of(eBikeFactory.create(eBikeId));
@@ -154,7 +155,6 @@ public class ApplicationImpl implements Application {
                 this.repository.ifPresent(repo ->
                         repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
         this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
-        System.out.println("Riding...");
     }
 
 }

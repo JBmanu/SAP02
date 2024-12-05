@@ -5,11 +5,11 @@ import java.awt.*;
 
 public final class TimedMessageDialog {
 
-    public static void showTimedMessage(final String message, final int milliseconds) {
-        SwingUtilities.invokeLater(() -> createTimedMessage(message, milliseconds));
+    public static void showTimedMessage(final Component parent, final String message, final int milliseconds) {
+        SwingUtilities.invokeLater(() -> createTimedMessage(parent, message, milliseconds));
     }
 
-    private static void createTimedMessage(final String message, final int milliseconds) {
+    private static void createTimedMessage(final Component parent, final String message, final int milliseconds) {
         final JDialog dialog = new JDialog();
         dialog.setUndecorated(true);
         dialog.setLayout(new BorderLayout());
@@ -39,15 +39,11 @@ public final class TimedMessageDialog {
 
         // Aggiunge il pannello arrotondato al dialogo
         dialog.add(roundedPanel, BorderLayout.CENTER);
-//        dialog.setSize(300, 120); // Dimensioni del dialogo
         dialog.pack();
-        dialog.setLocationRelativeTo(null);// Centra il dialogo sullo schermo
+        dialog.setLocationRelativeTo(parent);// Centra il dialogo sullo schermo
 
-        // Timer per chiudere il dialogo dopo un certo tempo
-        final Timer timer = new Timer(milliseconds, e -> {
-            dialog.dispose(); // Chiude il dialogo
-        });
-        timer.setRepeats(false); // Il timer deve essere eseguito solo una volta
+        final Timer timer = new Timer(milliseconds, e -> dialog.dispose());
+        timer.setRepeats(false);
         timer.start();
 
         dialog.setVisible(true);

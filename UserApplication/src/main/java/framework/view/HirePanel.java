@@ -72,15 +72,11 @@ public class HirePanel extends JPanel {
 
     private void onClickAddCredits() {
         final String credits = this.creditsField.getText();
-        TimedMessageDialog.showTimedMessage(
-                this.listenerHireEvent.onClickAddCredits(credits), 500);
+        this.listenerHireEvent.onClickAddCredits(credits);
     }
 
     private void onClickHireButton(final ActionEvent event) {
-        if (!this.listenerHireEvent.canHireEBike()) {
-            TimedMessageDialog.showTimedMessage("Have already ebike", 500);
-            return;
-        }
+        if (!this.listenerHireEvent.canHireEBike()) return;
 
         this.eBikesIdFreePopupMenu.show(this, this.hireButton.getX(), this.hireButton.getY());
         final String[] eBikesIdFree = this.listenerHireEvent.freeEBikes().toArray(new String[0]);
@@ -90,13 +86,8 @@ public class HirePanel extends JPanel {
         this.scrollPane.setViewportView(list);
         this.eBikesIdFreePopupMenu.setVisible(true);
         list.addListSelectionListener(e -> {
-            final String eBikeId = list.getSelectedValue();
-            final String message = this.listenerHireEvent.onClickHire(eBikeId);
-            if (message.equals(ViewEventPort.CORRECT)) {
-                this.hireButton.setVisible(false);
-                this.stopHireButton.setVisible(true);
-            }
-            TimedMessageDialog.showTimedMessage(message, 500);
+            this.listenerHireEvent.onClickHire(list.getSelectedValue());
+            this.eBikesIdFreePopupMenu.setVisible(false);
         });
     }
 
@@ -104,7 +95,6 @@ public class HirePanel extends JPanel {
         this.stopHireButton.setVisible(false);
         this.hireButton.setVisible(true);
         this.listenerHireEvent.onStopHireEBike();
-        TimedMessageDialog.showTimedMessage("Stop ride ebike", 500);
     }
 
     private void onClickLogout() {
@@ -119,5 +109,10 @@ public class HirePanel extends JPanel {
 
     public void setCredits(final float credits) {
         this.creditsValue.setText(CURRENCY + credits);
+    }
+
+    public void showStopHireButton() {
+        this.hireButton.setVisible(false);
+        this.stopHireButton.setVisible(true);
     }
 }
