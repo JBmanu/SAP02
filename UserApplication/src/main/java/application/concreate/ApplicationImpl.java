@@ -43,7 +43,7 @@ public class ApplicationImpl implements Application {
 
     @Override
     public List<String> eBikesIdFree() {
-        return this.repository.map(repo -> repo.eBikesIdFree()).orElse(List.of());
+        return this.repository.map(RepositoryPort::eBikesIdFree).orElse(List.of());
     }
 
     private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {
@@ -103,9 +103,9 @@ public class ApplicationImpl implements Application {
 
 
     @Override
-    public Optional<ErrorApplication> startRide(final String eBikeId) {
+    public Optional<ErrorApplication> hireEBike(final String eBikeId) {
         final Optional<ErrorApplication> error = this.repository.isPresent() && this.user.isPresent() ?
-                this.repository.get().startRide(this.user.get().username(), eBikeId, WITHOUT_CREDITS) :
+                this.repository.get().hireEBike(this.user.get().username(), eBikeId, WITHOUT_CREDITS) :
                 Optional.of(ErrorApplication.NOT_CONNECTED);
         if (error.isEmpty()) {
             final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();

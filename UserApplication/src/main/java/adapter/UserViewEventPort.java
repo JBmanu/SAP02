@@ -4,11 +4,12 @@ import application.Application;
 import application.ErrorApplication;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface UserViewEventPort {
     String CORRECT = "Correct";
+
+    Collection<String> eBikesFree();
 
     String onSignUp(String username, String password);
 
@@ -16,12 +17,11 @@ public interface UserViewEventPort {
 
     String onAddCredits(String credits);
 
-    Collection<String> eBikesFree();
+    String onHireEBike(String eBikeId);
 
     void onLogout();
 
     float credits();
-
 
 
     class UserViewEventPortImpl implements UserViewEventPort {
@@ -52,6 +52,11 @@ public interface UserViewEventPort {
 
             final Optional<ErrorApplication> error = this.application.addCreditsOf(creditsFloat);
             return error.map(Object::toString).orElse(CORRECT);
+        }
+
+        @Override
+        public String onHireEBike(final String eBikeId) {
+            return this.application.hireEBike(eBikeId).map(Object::toString).orElse(CORRECT);
         }
 
         @Override

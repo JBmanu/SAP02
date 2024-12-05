@@ -42,7 +42,7 @@ public class StartHireEBike {
 
     @When("The user start ride e-bike {string}")
     public void theUserStartRideEBike(final String eBikeId) {
-        this.error = this.application.startRide(eBikeId);
+        this.error = this.application.hireEBike(eBikeId);
     }
 
 
@@ -65,7 +65,7 @@ public class StartHireEBike {
         application1.setRepository(this.repositoryPort);
         application1.signUp(username, password);
         application1.addCreditsOf(SOME_CREDITS);
-        application1.startRide(eBikeId);
+        application1.hireEBike(eBikeId);
         assertTrue(this.application.isInUseEBike(eBikeId));
     }
 

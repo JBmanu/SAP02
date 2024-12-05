@@ -21,7 +21,7 @@ public interface Application {
     void logout();
 
 
-    Optional<ErrorApplication> startRide(String eBikeId);
+    Optional<ErrorApplication> hireEBike(String eBikeId);
 
     boolean isFreeEBike(String eBikeId);
     boolean isInUseEBike(String eBikeId);

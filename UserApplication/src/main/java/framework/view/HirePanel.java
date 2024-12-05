@@ -1,10 +1,9 @@
 package framework.view;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.util.List;
 
 public class HirePanel extends JPanel {
     public static final String LABEL_USERNAME = "Username: ";
@@ -15,21 +14,19 @@ public class HirePanel extends JPanel {
     public static final String ADD_CREDITS = "Add Credits";
 
     private final ListenerHireEvent listenerHireEvent;
-    private final JComboBox<String> eBikesIdFreeBox;
     private final JLabel usernameValue;
     private final JLabel creditsValue;
     private final JTextField creditsField;
-    private boolean loadEBikesIdFree;
+    private final JButton hireButton;
+
+    private final JPopupMenu eBikesIdFreePopupMenu;
+    private final JScrollPane scrollPane;
 
     public HirePanel(final ListenerHireEvent listenerHireEvent) {
         this.setSize(800, 200);
-        this.listenerHireEvent = listenerHireEvent;
-        this.loadEBikesIdFree = false;
-
-        // Creazione del pannello principale
         this.setLayout(new BorderLayout());
 
-        final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        this.listenerHireEvent = listenerHireEvent;
 
         this.usernameValue = new JLabel(" ");
         this.creditsValue = new JLabel(CURRENCY + " ");
@@ -40,15 +37,19 @@ public class HirePanel extends JPanel {
         final JButton addCreditsButton = new JButton(ADD_CREDITS);
         addCreditsButton.addActionListener(e -> this.onClickAddCredits());
 
-        final JButton hireButton = new JButton(HIRE);
-        this.eBikesIdFreeBox = new JComboBox<>(new String[]{ });
-        this.eBikesIdFreeBox.setVisible(false);
-        hireButton.addActionListener(this::onClickHireButton);
-        this.eBikesIdFreeBox.addItemListener(this::onClickHireEBike);
+        this.hireButton = new JButton(HIRE);
+        this.hireButton.addActionListener(this::onClickHireButton);
+        this.scrollPane = new JScrollPane();
+        this.scrollPane.setPreferredSize(new Dimension(150, 100));  // Impostare una dimensione per limitare la visibilità a 5 elementi
+        this.scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        this.eBikesIdFreePopupMenu = new JPopupMenu();
+        this.eBikesIdFreePopupMenu.add(this.scrollPane);
+
 
         final JButton signOutButton = new JButton(LOGOUT);
         signOutButton.addActionListener(e -> this.onClickLogout());
 
+        final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.add(usernameLabel);
         topPanel.add(this.usernameValue);
         topPanel.add(creditsLabel);
@@ -56,8 +57,8 @@ public class HirePanel extends JPanel {
         topPanel.add(addCreditsButton);
         topPanel.add(this.creditsField);
         topPanel.add(signOutButton);
-        topPanel.add(hireButton);
-        topPanel.add(this.eBikesIdFreeBox);
+        topPanel.add(this.hireButton);
+        topPanel.add(this.eBikesIdFreePopupMenu);
 
         this.add(topPanel, BorderLayout.NORTH);
     }
@@ -65,25 +66,21 @@ public class HirePanel extends JPanel {
     private void onClickAddCredits() {
         final String credits = this.creditsField.getText();
         TimedMessageDialog.showTimedMessage(
-                this.listenerHireEvent.onClickAddCredits(credits), 1000);
-    }
-
-    private void onClickHireEBike(final ItemEvent event) {
-        if (!this.loadEBikesIdFree) return;
-        final String selectedID = (String) event.getItem();
-        this.eBikesIdFreeBox.setVisible(false);
-        if (selectedID == null) return;
-        this.listenerHireEvent.onClickHire(selectedID);
-        TimedMessageDialog.showTimedMessage("Hai selezionato la bici con ID: " + selectedID, 1000);
+                this.listenerHireEvent.onClickAddCredits(credits), 500);
     }
 
     private void onClickHireButton(final ActionEvent event) {
-        this.loadEBikesIdFree = false;
-        final List<String> eBikesFree = this.listenerHireEvent.freeEBikes();
-        this.eBikesIdFreeBox.removeAllItems();
-        eBikesFree.forEach(this.eBikesIdFreeBox::addItem);
-        this.eBikesIdFreeBox.setVisible(true);
-        this.loadEBikesIdFree = true;
+        this.eBikesIdFreePopupMenu.show(this, this.hireButton.getX(), this.hireButton.getY());
+        final String[] eBikesIdFree = this.listenerHireEvent.freeEBikes().toArray(new String[0]);
+        final JList<String> list = new JList<>(eBikesIdFree);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        this.scrollPane.setViewportView(list);
+        this.eBikesIdFreePopupMenu.setVisible(true);
+        list.addListSelectionListener(e -> {
+            final String eBikeId = list.getSelectedValue();
+            TimedMessageDialog.showTimedMessage(this.listenerHireEvent.onClickHire(eBikeId), 500);
+        });
     }
 
     private void onClickLogout() {

@@ -92,8 +92,15 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     @Override
-    public void onClickHire(final String eBikeId) {
+    public String onClickHire(final String eBikeId) {
+        final String message = this.eventPort.isPresent() ?
+                this.eventPort.get().onHireEBike(eBikeId) : NOT_CONNECTED;
 
+        if (message.equals(UserViewEventPort.CORRECT)) {
+            this.hirePanel.setCredits(this.eventPort.get().credits());
+        }
+
+        return message;
     }
 
     @Override

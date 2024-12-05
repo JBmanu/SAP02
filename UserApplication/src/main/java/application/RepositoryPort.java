@@ -19,7 +19,7 @@ public interface RepositoryPort {
 
     Optional<Float> creditsOf(String username);
 
-    Optional<ErrorApplication> startRide(String username, String eBikeId, float withoutCredits);
+    Optional<ErrorApplication> hireEBike(String username, String eBikeId, float withoutCredits);
     boolean isFreeEBike(String eBikeId);
     boolean isInUseEBike(String eBikeId);
     boolean isLowBatteryEBike(String eBikeId);
@@ -85,7 +85,7 @@ public interface RepositoryPort {
         }
 
         @Override
-        public Optional<ErrorApplication> startRide(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
+        public Optional<ErrorApplication> hireEBike(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
             if (this.isInUseEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_IN_USE);
             if (this.isLowBatteryEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_LOW_BATTERY);
             final boolean canHire = this.userRepository.withdrawCredits(username, WITHOUT_CREDITS);

@@ -9,7 +9,7 @@ public interface ListenerHireEvent {
 
     List<String> freeEBikes();
 
-    void onClickHire(String eBikeId);
+    String onClickHire(String eBikeId);
 
     void onClickLogout();
 
