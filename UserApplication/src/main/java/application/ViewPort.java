@@ -15,6 +15,11 @@ public interface ViewPort {
 
     void showLoginPanel();
 
+    void showBattery(Optional<Integer> battery);
+
+    void showEBikeId(Optional<String> eBikeId);
+
+
     class ViewPortImpl implements ViewPort {
         private final View view;
 
@@ -46,6 +51,16 @@ public interface ViewPort {
         @Override
         public void showLoginPanel() {
             this.view.showLoginPanel();
+        }
+
+        @Override
+        public void showBattery(final Optional<Integer> battery) {
+            battery.ifPresent(this.view::setBattery);
+        }
+
+        @Override
+        public void showEBikeId(final Optional<String> eBikeId) {
+            eBikeId.ifPresent(this.view::setEBikeId);
         }
 
     }

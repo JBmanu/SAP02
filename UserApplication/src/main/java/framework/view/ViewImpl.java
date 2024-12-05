@@ -75,6 +75,16 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     @Override
+    public void setBattery(final Integer integer) {
+        this.hirePanel.setBattery(integer);
+    }
+
+    @Override
+    public void setEBikeId(final String eBikeId) {
+        this.hirePanel.setEBikeId(eBikeId);
+    }
+
+    @Override
     public void onClickSignUp(final String username, final String password) {
         this.eventPort.ifPresent(port -> port.onSignUp(username, password));
     }

@@ -13,4 +13,8 @@ public interface View {
     void showHirePanel(String username);
 
     void showLoginPanel();
+
+    void setBattery(Integer integer);
+
+    void setEBikeId(String eBikeId);
 }

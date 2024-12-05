@@ -126,6 +126,7 @@ public class ApplicationImpl implements Application {
                     controller.rideEBike(new RideEventPort.RideEventPortImpl(this)));
             this.view.ifPresent(view -> {
                 view.showCredits(this.creditsOfUser());
+                view.showEBikeId(this.eBikeId());
                 view.hireEBike();
             });
         }
@@ -193,6 +194,7 @@ public class ApplicationImpl implements Application {
     public void consumeBattery() {
         this.ebike.ifPresent(ebike ->
                 this.repository.ifPresent(repo -> repo.consumeBattery(ebike.id(), CONSUME_BATTERY)));
+        this.view.ifPresent(view -> view.showBattery(this.eBikeBattery()));
     }
 
     @Override

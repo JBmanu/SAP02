@@ -1,7 +1,5 @@
 package framework.view;
 
-import adapter.ViewEventPort;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,11 +23,14 @@ public class HirePanel extends JPanel {
     private final JButton hireButton;
     private final JButton stopHireButton;
 
+    private final EBikePanel eBikePanel;
+
     public HirePanel(final ListenerHireEvent listenerHireEvent) {
         this.setSize(800, 200);
         this.setLayout(new BorderLayout());
 
         this.listenerHireEvent = listenerHireEvent;
+        this.eBikePanel = new EBikePanel();
 
         this.usernameValue = new JLabel(" ");
         this.creditsValue = new JLabel(CURRENCY + " ");
@@ -68,6 +69,7 @@ public class HirePanel extends JPanel {
         topPanel.add(this.eBikesIdFreePopupMenu);
 
         this.add(topPanel, BorderLayout.NORTH);
+        this.add(this.eBikePanel, BorderLayout.WEST);
     }
 
     private void onClickAddCredits() {
@@ -112,5 +114,13 @@ public class HirePanel extends JPanel {
 
     public void setUsername(final String username) {
         this.usernameValue.setText(username);
+    }
+
+    public void setBattery(final Integer integer) {
+        this.eBikePanel.setBattery(integer);
+    }
+
+    public void setEBikeId(final String string) {
+        this.eBikePanel.setId(string);
     }
 }
