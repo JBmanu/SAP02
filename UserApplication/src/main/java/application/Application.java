@@ -9,7 +9,7 @@ public interface Application {
 
     void setEBikeController(EBikeControllerPort ebikeController);
     void setRepository(RepositoryPort repository);
-    void setUserView(UserViewPort userView);
+    void setView(ViewPort view);
 
     List<String> eBikesIdFree();
 

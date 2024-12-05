@@ -13,7 +13,7 @@ import java.util.Optional;
 public class ApplicationImpl implements Application {
     private Optional<EBikeControllerPort> ebikeController;
     private Optional<RepositoryPort> repository;
-    private Optional<UserViewPort> userView;
+    private Optional<ViewPort> view;
 
     private Optional<User> user;
     private Optional<EBike> ebike;
@@ -21,7 +21,7 @@ public class ApplicationImpl implements Application {
     public ApplicationImpl() {
         this.ebikeController = Optional.empty();
         this.repository = Optional.empty();
-        this.userView = Optional.empty();
+        this.view = Optional.empty();
         this.user = Optional.empty();
         this.ebike = Optional.empty();
     }
@@ -37,8 +37,8 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
-    public void setUserView(final UserViewPort userView) {
-        this.userView = Optional.ofNullable(userView);
+    public void setView(final ViewPort view) {
+        this.view = Optional.ofNullable(view);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ApplicationImpl implements Application {
         final Optional<ErrorApplication> error = this.repository.isPresent() ?
                 this.repository.get().signUp(username, password) : Optional.empty();
         this.userLogged(error, username, password);
-        this.userView.ifPresent(view -> view.showError(error));
+        this.view.ifPresent(view -> view.showError(error));
         return error;
     }
 
@@ -66,7 +66,7 @@ public class ApplicationImpl implements Application {
         final Optional<ErrorApplication> error = this.repository.isPresent() ?
                 this.repository.get().signIn(username, password) : Optional.empty();
         this.userLogged(error, username, password);
-        this.userView.ifPresent(view -> view.showError(error));
+        this.view.ifPresent(view -> view.showError(error));
         return error;
     }
 
@@ -74,7 +74,7 @@ public class ApplicationImpl implements Application {
     public Optional<ErrorApplication> addCreditsOf(final float someCredits) {
         final Optional<ErrorApplication> error = this.user.isPresent() && this.repository.isPresent() ?
                 this.repository.get().addCreditsTo(this.user.get().username(), someCredits) : Optional.empty();
-        this.userView.ifPresent(view -> view.showError(error));
+        this.view.ifPresent(view -> view.showError(error));
         return error;
     }
 
@@ -153,6 +153,8 @@ public class ApplicationImpl implements Application {
         this.user.ifPresent(user ->
                 this.repository.ifPresent(repo ->
                         repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
+        this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
+        System.out.println("Riding...");
     }
 
 }

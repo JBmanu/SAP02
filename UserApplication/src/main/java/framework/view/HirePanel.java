@@ -1,6 +1,6 @@
 package framework.view;
 
-import adapter.UserViewEventPort;
+import adapter.ViewEventPort;
 
 import javax.swing.*;
 import java.awt.*;
@@ -92,7 +92,7 @@ public class HirePanel extends JPanel {
         list.addListSelectionListener(e -> {
             final String eBikeId = list.getSelectedValue();
             final String message = this.listenerHireEvent.onClickHire(eBikeId);
-            if (message.equals(UserViewEventPort.CORRECT)) {
+            if (message.equals(ViewEventPort.CORRECT)) {
                 this.hireButton.setVisible(false);
                 this.stopHireButton.setVisible(true);
             }

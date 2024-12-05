@@ -1,10 +1,7 @@
 package framework.view;
 
-import adapter.UserViewEventPort;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Optional;
 
 public class LoginPanel extends JPanel {
     private final JTextField usernameField;

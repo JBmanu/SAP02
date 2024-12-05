@@ -6,7 +6,7 @@ import application.ErrorApplication;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface UserViewEventPort {
+public interface ViewEventPort {
     String CORRECT = "Correct";
 
     Collection<String> eBikesFree();
@@ -29,10 +29,10 @@ public interface UserViewEventPort {
 
 
 
-    class UserViewEventPortImpl implements UserViewEventPort {
+    class ViewEventPortImpl implements ViewEventPort {
         private final Application application;
 
-        public UserViewEventPortImpl(final Application application) {
+        public ViewEventPortImpl(final Application application) {
             this.application = application;
         }
 

@@ -1,6 +1,6 @@
 package framework.view;
 
-import adapter.UserViewEventPort;
+import adapter.ViewEventPort;
 import adapter.View;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     private final HirePanel hirePanel;
     private final LoginPanel loginPanel;
 
-    private Optional<UserViewEventPort> eventPort;
+    private Optional<ViewEventPort> eventPort;
 
     public ViewImpl() {
         this.eventPort = Optional.empty();
@@ -44,8 +44,18 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     @Override
-    public void setEventPort(final UserViewEventPort eventPort) {
+    public void setEventPort(final ViewEventPort eventPort) {
         this.eventPort = Optional.ofNullable(eventPort);
+    }
+
+    @Override
+    public void setCredits(final Float credits) {
+        this.hirePanel.setCredits(credits);
+    }
+
+    @Override
+    public void showError(final String string) {
+
     }
 
     private void showHirePanel(final String username) {
@@ -58,7 +68,7 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     public String onClickSignUp(final String username, final String password) {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onSignUp(username, password) : NOT_CONNECTED;
-        if (message.equals(UserViewEventPort.CORRECT)) {
+        if (message.equals(ViewEventPort.CORRECT)) {
             this.showHirePanel(username);
         }
         return message;
@@ -68,7 +78,7 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     public String onClickSignIn(final String username, final String password) {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onSignIn(username, password) : NOT_CONNECTED;
-        if (message.equals(UserViewEventPort.CORRECT)) {
+        if (message.equals(ViewEventPort.CORRECT)) {
             this.showHirePanel(username);
         }
         return message;
@@ -78,7 +88,7 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     public String onClickAddCredits(final String credits) {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onAddCredits(credits) : NOT_CONNECTED;
-        if (message.equals(UserViewEventPort.CORRECT)) {
+        if (message.equals(ViewEventPort.CORRECT)) {
             this.hirePanel.setCredits(this.eventPort.get().credits());
         }
         return message;
@@ -96,7 +106,7 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onHireEBike(eBikeId) : NOT_CONNECTED;
 
-        if (message.equals(UserViewEventPort.CORRECT)) {
+        if (message.equals(ViewEventPort.CORRECT)) {
             this.hirePanel.setCredits(this.eventPort.get().credits());
         }
 
@@ -105,18 +115,18 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
 
     @Override
     public void onStopHireEBike() {
-        this.eventPort.ifPresent(UserViewEventPort::onStopHireEBike);
+        this.eventPort.ifPresent(ViewEventPort::onStopHireEBike);
         this.hirePanel.setCredits(this.eventPort.get().credits());
     }
 
     @Override
     public boolean canHireEBike() {
-        return this.eventPort.map(UserViewEventPort::canHireEBike).orElse(false);
+        return this.eventPort.map(ViewEventPort::canHireEBike).orElse(false);
     }
 
     @Override
     public void onClickLogout() {
         this.changePanel(this.loginPanel);
-        this.eventPort.ifPresent(UserViewEventPort::onLogout);
+        this.eventPort.ifPresent(ViewEventPort::onLogout);
     }
 }

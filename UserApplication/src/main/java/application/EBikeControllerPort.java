@@ -5,6 +5,8 @@ import adapter.RideEventPort;
 import java.util.Optional;
 
 public interface EBikeControllerPort {
+    int WAIT_COST_RIDE = 500;
+
     void rideEBike(RideEventPort rideEventPort);
 
     void stopEBike();
@@ -17,7 +19,7 @@ public interface EBikeControllerPort {
         public void run() {
             while (this.isRiding) {
                 try {
-                    sleep(500);
+                    sleep(WAIT_COST_RIDE);
                 } catch (final InterruptedException ignored) { }
                 this.rideEventPort.ifPresent(RideEventPort::onRide);
 

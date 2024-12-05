@@ -2,6 +2,9 @@ package adapter;
 
 
 public interface View {
-    void setEventPort(UserViewEventPort eventPort);
+    void setEventPort(ViewEventPort eventPort);
 
+    void setCredits(Float credits);
+
+    void showError(String string);
 }

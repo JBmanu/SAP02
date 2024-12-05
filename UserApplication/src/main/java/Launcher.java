@@ -1,7 +1,9 @@
-import adapter.UserViewEventPort;
+import adapter.ViewEventPort;
 import adapter.View;
 import application.Application;
+import application.EBikeControllerPort;
 import application.RepositoryPort;
+import application.ViewPort;
 import application.concreate.ApplicationImpl;
 import entity.ebike.EBikeRepository;
 import entity.ebike.concreate.EBikeRepositoryImpl;
@@ -15,12 +17,15 @@ public final class Launcher {
         final EBikeRepository ebikeRepository = new EBikeRepositoryImpl();
         for (int i = 0; i < 10; i++) ebikeRepository.add();
 
+        final EBikeControllerPort ebikeControllerPort = new EBikeControllerPort.EBikeControllerPortImpl();
         final Application application = new ApplicationImpl();
         application.setRepository(new RepositoryPort.RepositoryPortImpl(userRepository, ebikeRepository));
+        application.setEBikeController(ebikeControllerPort);
 
-        final UserViewEventPort userViewEventPort = new UserViewEventPort.UserViewEventPortImpl(application);
+        final ViewEventPort viewEventPort = new ViewEventPort.ViewEventPortImpl(application);
         final View view = new ViewImpl();
-        view.setEventPort(userViewEventPort);
+        view.setEventPort(viewEventPort);
+        application.setView(new ViewPort.ViewPortImpl(view));
 
 //        final Application application1 = new ApplicationImpl();
 //        application1.setRepository(new RepositoryPort.RepositoryPortImpl(userRepository, ebikeRepository));
