@@ -8,13 +8,18 @@ import entity.user.concreate.UserRepositoryImpl;
 import java.util.Optional;
 
 public interface RepositoryPort {
+    boolean contain(String username);
+
     Optional<ErrorApplication> signUp(String username, String password);
     Optional<ErrorApplication> signIn(String username, String password);
     Optional<ErrorApplication> addCreditsTo(String username, float someCredits);
 
-    boolean contain(String username);
-
     Optional<Float> creditsOf(String username);
+
+    Optional<ErrorApplication> startRide(String username, String eBikeId, float withoutCredits);
+    boolean isFreeEBike(String eBikeId);
+    boolean isInUseEBike(String eBikeId);
+    boolean isLowBatteryEBike(String eBikeId);
 
 
     class RepositoryPortImpl implements RepositoryPort {
@@ -29,6 +34,11 @@ public interface RepositoryPort {
         public RepositoryPortImpl(final UserRepository userRepository, final EBikeRepository ebikeRepository) {
             this.userRepository = userRepository;
             this.ebikeRepository = ebikeRepository;
+        }
+
+        @Override
+        public boolean contain(final String username) {
+            return this.userRepository.contains(username);
         }
 
         @Override
@@ -61,13 +71,33 @@ public interface RepositoryPort {
         }
 
         @Override
-        public boolean contain(final String username) {
-            return this.userRepository.contains(username);
+        public Optional<Float> creditsOf(final String username) {
+            return this.userRepository.creditsOf(username);
         }
 
         @Override
-        public Optional<Float> creditsOf(final String username) {
-            return this.userRepository.creditsOf(username);
+        public Optional<ErrorApplication> startRide(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
+            if (this.isInUseEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_IN_USE);
+            if (this.isLowBatteryEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_LOW_BATTERY);
+            final boolean canHire = this.userRepository.withdrawCredits(username, WITHOUT_CREDITS);
+            if (!canHire) return Optional.of(ErrorApplication.ZERO_CREDITS);
+            this.ebikeRepository.hireEBike(eBikeId);
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean isFreeEBike(final String eBikeId) {
+            return this.ebikeRepository.isFree(eBikeId);
+        }
+
+        @Override
+        public boolean isInUseEBike(final String eBikeId) {
+            return this.ebikeRepository.isInUse(eBikeId);
+        }
+
+        @Override
+        public boolean isLowBatteryEBike(final String eBikeId) {
+            return this.ebikeRepository.isLowBattery(eBikeId);
         }
     }
 }

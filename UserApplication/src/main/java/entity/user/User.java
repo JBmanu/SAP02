@@ -10,4 +10,6 @@ public interface User {
     void addCredits(float amount);
 
     void withdrawCredits(float amount);
+
+    boolean hasSufficientCredits(float amount);
 }

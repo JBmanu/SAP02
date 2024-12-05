@@ -9,9 +9,10 @@ import java.awt.geom.Point2D;
 public class EBikeImpl implements EBike {
     public static final int MAX_LEVEL_BATTERY = 100;
     public static final int MIN_LEVEL_BATTERY = 0;
+    public static final int LOW_BATTERY = 20;
     private final String id;
     private EBikeState state;
-    private final int battery;
+    private int battery;
 
     private Point2D position;
     private V2d direction;
@@ -51,7 +52,7 @@ public class EBikeImpl implements EBike {
 
     @Override
     public boolean hire() {
-        if (this.state == EBikeState.FREE) {
+        if (this.isFree()) {
             this.state = EBikeState.IN_USE;
             return true;
         }
@@ -64,6 +65,26 @@ public class EBikeImpl implements EBike {
         this.speed = 0;
     }
 
+    @Override
+    public boolean isFree() {
+        return this.state == EBikeState.FREE;
+    }
+
+    @Override
+    public boolean isInUse() {
+        return this.state == EBikeState.IN_USE;
+    }
+
+    @Override
+    public boolean isLowBattery() {
+        return this.state == EBikeState.LOW_BATTERY;
+    }
+
+    @Override
+    public void setLowBattery() {
+        this.battery = LOW_BATTERY;
+        this.state = EBikeState.LOW_BATTERY;
+    }
 
     @Override
     public int hashCode() {

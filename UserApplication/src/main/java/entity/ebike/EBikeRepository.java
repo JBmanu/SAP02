@@ -14,4 +14,10 @@ public interface EBikeRepository {
     boolean updateEBikePosition(String id, Point2D position);
     boolean stopEBike(String id);
     boolean rechargeEBikeBattery(String id, float amount);
+
+    boolean isFree(String eBikeId);
+    boolean isInUse(String eBikeId);
+    boolean isLowBattery(String eBikeId);
+
+    void setLowBattery(String eBikeId);
 }

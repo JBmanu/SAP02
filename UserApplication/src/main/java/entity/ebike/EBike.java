@@ -11,4 +11,10 @@ public interface EBike {
     boolean hire();
     void updatePosition(Point2D position);
     void stopRide();
+
+    boolean isFree();
+    boolean isInUse();
+    boolean isLowBattery();
+
+    void setLowBattery();
 }

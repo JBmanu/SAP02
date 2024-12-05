@@ -18,7 +18,7 @@ public class SignIn {
     @Before
     public void setup() {
         this.application = new ApplicationImpl();
-        this.application.setUserRepository(this.repositoryPort);
+        this.application.setRepository(this.repositoryPort);
     }
 
     @Given("The user {string} is not registered")

@@ -18,7 +18,7 @@ public class SignUp {
     public void theUserIsNotRegistered() {
         final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
         this.application = new ApplicationImpl();
-        this.application.setUserRepository(repositoryPort);
+        this.application.setRepository(repositoryPort);
     }
 
 

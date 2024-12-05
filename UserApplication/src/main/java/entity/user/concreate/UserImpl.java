@@ -3,9 +3,11 @@ package entity.user.concreate;
 import entity.user.User;
 
 public class UserImpl implements User {
+
     private record DataUser(String username, String password, float credits) { }
 
-    private static final int INIT_CREDITS = 0;
+    public static final int ZERO_CREDITS = 0;
+    private static final int INIT_CREDITS = ZERO_CREDITS;
     private final DataUser dataUser;
     private float credits;
 
@@ -41,6 +43,11 @@ public class UserImpl implements User {
     @Override
     public void withdrawCredits(final float amount) {
         this.credits -= amount;
+    }
+
+    @Override
+    public boolean hasSufficientCredits(final float amount) {
+        return this.credits >= amount;
     }
 
     @Override

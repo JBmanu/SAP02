@@ -65,4 +65,38 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     public boolean rechargeEBikeBattery(final String id, final float amount) {
         return false;
     }
+
+    @Override
+    public boolean isFree(final String eBikeId) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(eBikeId))
+                .findFirst()
+                .map(EBike::isFree)
+                .orElse(false);
+    }
+
+    @Override
+    public boolean isInUse(final String eBikeId) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(eBikeId))
+                .findFirst()
+                .map(EBike::isInUse)
+                .orElse(false);
+    }
+
+    @Override
+    public boolean isLowBattery(final String eBikeId) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(eBikeId))
+                .findFirst()
+                .map(EBike::isLowBattery)
+                .orElse(false);
+    }
+
+    @Override
+    public void setLowBattery(final String eBikeId) {
+        this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(eBikeId))
+                .forEach(EBike::setLowBattery);
+    }
 }

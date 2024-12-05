@@ -16,7 +16,7 @@ public final class Launcher {
 
         final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl(userRepository, ebikeRepository);
         final Application application = new ApplicationImpl();
-        application.setUserRepository(repositoryPort);
+        application.setRepository(repositoryPort);
 
         final UserViewEventPort userViewEventPort = new UserViewEventPort.UserViewEventPortImpl(application);
         final View view = new ViewImpl();
