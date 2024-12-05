@@ -6,6 +6,7 @@ import entity.ebike.EBikeRepository;
 
 import java.awt.geom.Point2D;
 import java.util.HashSet;
+import java.util.List;
 
 public class EBikeRepositoryImpl implements EBikeRepository {
     private final EBikeFactory ebikeFactory;
@@ -14,6 +15,11 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     public EBikeRepositoryImpl() {
         this.ebikes = new HashSet<>();
         this.ebikeFactory = new EBikeFactory.SimpleFactory();
+    }
+
+    @Override
+    public List<String> eBikesIdFree() {
+        return this.ebikes.stream().filter(EBike::isFree).map(EBike::id).toList();
     }
 
     @Override

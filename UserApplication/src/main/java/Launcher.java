@@ -13,6 +13,11 @@ public final class Launcher {
     public static void main(final String[] args) {
         final UserRepository userRepository = new UserRepositoryImpl();
         final EBikeRepository ebikeRepository = new EBikeRepositoryImpl();
+        ebikeRepository.add();
+        ebikeRepository.add();
+        ebikeRepository.add();
+        ebikeRepository.add();
+        ebikeRepository.add();
 
         final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl(userRepository, ebikeRepository);
         final Application application = new ApplicationImpl();

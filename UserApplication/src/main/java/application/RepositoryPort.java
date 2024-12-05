@@ -5,9 +5,12 @@ import entity.ebike.concreate.EBikeRepositoryImpl;
 import entity.user.UserRepository;
 import entity.user.concreate.UserRepositoryImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RepositoryPort {
+    List<String> eBikesIdFree();
+
     boolean contain(String username);
 
     Optional<ErrorApplication> signUp(String username, String password);
@@ -22,6 +25,7 @@ public interface RepositoryPort {
     boolean isLowBatteryEBike(String eBikeId);
 
 
+
     class RepositoryPortImpl implements RepositoryPort {
         private final UserRepository userRepository;
         private final EBikeRepository ebikeRepository;
@@ -34,6 +38,11 @@ public interface RepositoryPort {
         public RepositoryPortImpl(final UserRepository userRepository, final EBikeRepository ebikeRepository) {
             this.userRepository = userRepository;
             this.ebikeRepository = ebikeRepository;
+        }
+
+        @Override
+        public List<String> eBikesIdFree() {
+            return this.ebikeRepository.eBikesIdFree();
         }
 
         @Override

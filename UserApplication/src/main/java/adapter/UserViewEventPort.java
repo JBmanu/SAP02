@@ -3,6 +3,8 @@ package adapter;
 import application.Application;
 import application.ErrorApplication;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserViewEventPort {
@@ -14,9 +16,12 @@ public interface UserViewEventPort {
 
     String onAddCredits(String credits);
 
+    Collection<String> eBikesFree();
+
     void onLogout();
 
     float credits();
+
 
 
     class UserViewEventPortImpl implements UserViewEventPort {
@@ -47,6 +52,11 @@ public interface UserViewEventPort {
 
             final Optional<ErrorApplication> error = this.application.addCreditsOf(creditsFloat);
             return error.map(Object::toString).orElse(CORRECT);
+        }
+
+        @Override
+        public Collection<String> eBikesFree() {
+            return this.application.eBikesIdFree();
         }
 
         @Override

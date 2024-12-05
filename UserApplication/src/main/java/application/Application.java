@@ -1,5 +1,6 @@
 package application;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Application {
@@ -7,6 +8,8 @@ public interface Application {
     void setEBikeController(EbikeControllerPort ebikeController);
     void setRepository(RepositoryPort repository);
     void setUserView(UserViewPort userView);
+
+    List<String> eBikesIdFree();
 
     Optional<ErrorApplication> signUp(String username, String password);
     Optional<ErrorApplication> signIn(String username, String password);

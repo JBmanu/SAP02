@@ -2,6 +2,9 @@ package framework.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.util.List;
 
 public class HirePanel extends JPanel {
     public static final String LABEL_USERNAME = "Username: ";
@@ -12,14 +15,16 @@ public class HirePanel extends JPanel {
     public static final String ADD_CREDITS = "Add Credits";
 
     private final ListenerHireEvent listenerHireEvent;
-    private final JComboBox<String> idDisponibiliComboBox;
+    private final JComboBox<String> eBikesIdFreeBox;
     private final JLabel usernameValue;
     private final JLabel creditsValue;
     private final JTextField creditsField;
+    private boolean loadEBikesIdFree;
 
     public HirePanel(final ListenerHireEvent listenerHireEvent) {
-        this.setSize(400, 200);
+        this.setSize(800, 200);
         this.listenerHireEvent = listenerHireEvent;
+        this.loadEBikesIdFree = false;
 
         // Creazione del pannello principale
         this.setLayout(new BorderLayout());
@@ -36,17 +41,14 @@ public class HirePanel extends JPanel {
         addCreditsButton.addActionListener(e -> this.onClickAddCredits());
 
         final JButton hireButton = new JButton(HIRE);
-        this.idDisponibiliComboBox = new JComboBox<>(new String[]{"ID1", "ID2", "ID3"});
-        this.idDisponibiliComboBox.setVisible(false);
+        this.eBikesIdFreeBox = new JComboBox<>(new String[]{ });
+        this.eBikesIdFreeBox.setVisible(false);
+        hireButton.addActionListener(this::onClickHireButton);
+        this.eBikesIdFreeBox.addItemListener(this::onClickHireEBike);
 
         final JButton signOutButton = new JButton(LOGOUT);
         signOutButton.addActionListener(e -> this.onClickLogout());
 
-        hireButton.addActionListener(e -> this.idDisponibiliComboBox.setVisible(true));
-
-        this.idDisponibiliComboBox.addActionListener(e -> this.onClickHire());
-
-        // Aggiunta componenti al pannello superiore
         topPanel.add(usernameLabel);
         topPanel.add(this.usernameValue);
         topPanel.add(creditsLabel);
@@ -55,7 +57,7 @@ public class HirePanel extends JPanel {
         topPanel.add(this.creditsField);
         topPanel.add(signOutButton);
         topPanel.add(hireButton);
-        topPanel.add(this.idDisponibiliComboBox);
+        topPanel.add(this.eBikesIdFreeBox);
 
         this.add(topPanel, BorderLayout.NORTH);
     }
@@ -66,18 +68,28 @@ public class HirePanel extends JPanel {
                 this.listenerHireEvent.onClickAddCredits(credits), 1000);
     }
 
-    private void onClickHire() {
-        final String selectedID = (String) this.idDisponibiliComboBox.getSelectedItem();
-        this.idDisponibiliComboBox.setVisible(false); // Nasconde il combo box
-        if (selectedID != null) {
-            this.listenerHireEvent.onClickHire(selectedID);
-            TimedMessageDialog.showTimedMessage("Hai selezionato la bici con ID: " + selectedID, 1000);
-        }
+    private void onClickHireEBike(final ItemEvent event) {
+        if (!this.loadEBikesIdFree) return;
+        final String selectedID = (String) event.getItem();
+        this.eBikesIdFreeBox.setVisible(false);
+        if (selectedID == null) return;
+        this.listenerHireEvent.onClickHire(selectedID);
+        TimedMessageDialog.showTimedMessage("Hai selezionato la bici con ID: " + selectedID, 1000);
+    }
+
+    private void onClickHireButton(final ActionEvent event) {
+        this.loadEBikesIdFree = false;
+        final List<String> eBikesFree = this.listenerHireEvent.freeEBikes();
+        this.eBikesIdFreeBox.removeAllItems();
+        eBikesFree.forEach(this.eBikesIdFreeBox::addItem);
+        this.eBikesIdFreeBox.setVisible(true);
+        this.loadEBikesIdFree = true;
     }
 
     private void onClickLogout() {
         this.listenerHireEvent.onClickLogout();
     }
+
 
     public void setUserData(final String username, final float credits) {
         this.usernameValue.setText(username);

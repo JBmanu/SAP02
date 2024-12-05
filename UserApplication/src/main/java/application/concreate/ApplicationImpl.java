@@ -6,6 +6,7 @@ import entity.ebike.EBikeFactory;
 import entity.user.User;
 import entity.user.UserFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ApplicationImpl implements Application {
@@ -38,6 +39,11 @@ public class ApplicationImpl implements Application {
     @Override
     public void setUserView(final UserViewPort userView) {
         this.userView = Optional.ofNullable(userView);
+    }
+
+    @Override
+    public List<String> eBikesIdFree() {
+        return this.repository.map(repo -> repo.eBikesIdFree()).orElse(List.of());
     }
 
     private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {

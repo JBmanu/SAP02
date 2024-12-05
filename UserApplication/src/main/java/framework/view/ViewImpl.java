@@ -5,6 +5,8 @@ import adapter.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ViewImpl extends JFrame implements View, ListenerHireEvent {
@@ -80,6 +82,13 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
             this.hirePanel.setCredits(this.eventPort.get().credits());
         }
         return message;
+    }
+
+    @Override
+    public List<String> freeEBikes() {
+        final List<String> eBikesFree = new ArrayList<>();
+        this.eventPort.ifPresent(port -> eBikesFree.addAll(port.eBikesFree()));
+        return eBikesFree;
     }
 
     @Override
