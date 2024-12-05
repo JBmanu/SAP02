@@ -23,4 +23,5 @@ public interface EBikeRepository {
 
     void setLowBattery(String eBikeId);
 
+    void consumeBattery(String id, int consumeBattery);
 }

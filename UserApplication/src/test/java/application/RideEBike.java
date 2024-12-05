@@ -53,8 +53,7 @@ public class RideEBike {
     public void theSystemSubtractTheCreditNotifyTheUser() {
         try {
             sleep(1000);
-        } catch (final InterruptedException ignored) {
-        }
+        } catch (final InterruptedException ignored) { }
         assertTrue(this.application.creditsOfUser().get() < SOME_CREDITS - Application.CREDITS_FOR_HIRE);
         this.application.stopEBike();
     }
@@ -64,16 +63,29 @@ public class RideEBike {
         while (this.application.creditsOfUser().get() > ZERO_CREDITS) {
             this.application.withdrawCredits();
         }
-        assertTrue(this.application.creditsOfUser().get() == ZERO_CREDITS);
+        assertEquals(ZERO_CREDITS, this.application.creditsOfUser().get());
     }
-    @Then("The system stops the ride, notify the user and free the e-bike")
-    public void theSystemStopsTheRideNotifyTheUserAndFreeTheEBike() {
+    @Then("The system stops the ride, notify the user and free the e-bike with id {string}")
+    public void theSystemStopsTheRideNotifyTheUserAndFreeTheEBike(final String eBikeId) {
         try {
             sleep(1000);
-        } catch (final InterruptedException ignored) {
-        }
+        } catch (final InterruptedException ignored) { }
         assertFalse(this.application.hasHireEBike());
+        assertTrue(this.application.isFreeEBike(eBikeId));
     }
 
 
+    @Given("The e-bike {string} is with low battery")
+    public void theEBikeIsWithLowBattery(final String eBikeId) {
+        this.repositoryPort.consumeBattery(eBikeId, 100);
+        assertTrue(this.application.isLowBatteryEBike(eBikeId));
+    }
+    @Then("The system stops the ride, notify the user and low battery the e-bike {string}")
+    public void theSystemStopsTheRideNotifyTheUserAndLowBatteryTheEBike(final String eBikeId) {
+        try {
+            sleep(1000);
+        } catch (final InterruptedException ignored) { }
+        assertFalse(this.application.hasHireEBike());
+        assertTrue(this.application.isLowBatteryEBike(eBikeId));
+    }
 }

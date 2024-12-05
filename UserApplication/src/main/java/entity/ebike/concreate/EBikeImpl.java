@@ -8,7 +8,6 @@ import java.awt.geom.Point2D;
 
 public class EBikeImpl implements EBike {
     public static final int MAX_LEVEL_BATTERY = 100;
-    public static final int MIN_LEVEL_BATTERY = 0;
     public static final int LOW_BATTERY = 20;
     private final String id;
     private EBikeState state;
@@ -61,7 +60,9 @@ public class EBikeImpl implements EBike {
 
     @Override
     public void stopRide() {
-        this.state = EBikeState.FREE;
+        if (this.isInUse()) {
+            this.state = EBikeState.FREE;
+        }
         this.speed = 0;
     }
 
@@ -84,6 +85,14 @@ public class EBikeImpl implements EBike {
     public void setLowBattery() {
         this.battery = LOW_BATTERY;
         this.state = EBikeState.LOW_BATTERY;
+    }
+
+    @Override
+    public void consumeBattery(final int consumeBattery) {
+        this.battery -= consumeBattery;
+        if (this.battery < LOW_BATTERY) {
+            this.setLowBattery();
+        }
     }
 
     @Override

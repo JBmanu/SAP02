@@ -105,4 +105,11 @@ public class EBikeRepositoryImpl implements EBikeRepository {
                 .filter(ebike -> ebike.id().equals(eBikeId))
                 .forEach(EBike::setLowBattery);
     }
+
+    @Override
+    public void consumeBattery(String id, int consumeBattery) {
+        this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(id))
+                .forEach(ebike -> ebike.consumeBattery(consumeBattery));
+    }
 }

@@ -28,6 +28,7 @@ public interface RepositoryPort {
 
     void withdrawCredits(String username, float someCredits);
 
+    void consumeBattery(String id, int consumeBattery);
 
     class RepositoryPortImpl implements RepositoryPort {
         private final UserRepository userRepository;
@@ -121,5 +122,11 @@ public interface RepositoryPort {
         public void withdrawCredits(final String username, final float someCredits) {
             this.userRepository.withdrawCredits(username, someCredits);
         }
+
+        @Override
+        public void consumeBattery(final String id, final int consumeBattery) {
+            this.ebikeRepository.consumeBattery(id, consumeBattery);
+        }
+
     }
 }

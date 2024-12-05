@@ -17,4 +17,6 @@ public interface EBike {
     boolean isLowBattery();
 
     void setLowBattery();
+
+    void consumeBattery(int consumeBattery);
 }

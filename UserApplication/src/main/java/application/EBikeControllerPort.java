@@ -28,6 +28,12 @@ public interface EBikeControllerPort {
                         rideEventPort.stopRide();
                     }
                 });
+
+                this.rideEventPort.ifPresent(rideEventPort -> {
+                    if (rideEventPort.eBikeIsLowBattery()) {
+                        rideEventPort.stopRide();
+                    }
+                });
             }
         }
 

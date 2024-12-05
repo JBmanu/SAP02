@@ -10,6 +10,8 @@ public interface RideEventPort {
 
     void stopRide();
 
+    boolean eBikeIsLowBattery();
+
     class RideEventPortImpl implements RideEventPort {
         private final Application application;
 
@@ -20,6 +22,7 @@ public interface RideEventPort {
         @Override
         public void onRide() {
             this.application.withdrawCredits();
+            this.application.consumeBattery();
         }
 
         @Override
@@ -30,6 +33,11 @@ public interface RideEventPort {
         @Override
         public void stopRide() {
             this.application.stopEBike();
+        }
+
+        @Override
+        public boolean eBikeIsLowBattery() {
+            return this.application.eBikesHasLowBattery();
         }
     }
 }

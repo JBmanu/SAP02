@@ -145,6 +145,13 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
+    public boolean eBikesHasLowBattery() {
+        return this.ebike.flatMap(ebike ->
+                        this.repository.map(repo -> repo.isLowBatteryEBike(ebike.id())))
+                .orElse(false);
+    }
+
+    @Override
     public boolean userHasCredits() {
         return this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
     }
@@ -155,6 +162,12 @@ public class ApplicationImpl implements Application {
                 this.repository.ifPresent(repo ->
                         repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
         this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
+    }
+
+    @Override
+    public void consumeBattery() {
+        this.ebike.ifPresent(ebike ->
+                this.repository.ifPresent(repo -> repo.consumeBattery(ebike.id(), CONSUME_BATTERY)));
     }
 
 }
