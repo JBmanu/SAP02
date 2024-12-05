@@ -58,80 +58,59 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
         TimedMessageDialog.showTimedMessage(this, string, 500);
     }
 
-    private void showHirePanel(final String username) {
-        this.eventPort.ifPresent(port ->
-                this.hirePanel.setUserData(username, port.credits()));
+    @Override
+    public void hireEBike() {
+        this.hirePanel.showStopHireButton();
+    }
+
+    @Override
+    public void showHirePanel(final String username) {
+        this.hirePanel.setUsername(username);
         this.changePanel(this.hirePanel);
     }
 
     @Override
+    public void showLoginPanel() {
+        this.changePanel(this.loginPanel);
+    }
+
+    @Override
     public void onClickSignUp(final String username, final String password) {
-        this.eventPort.ifPresent(port -> {
-            final String message = port.onSignUp(username, password);
-            if (message.equals(ViewEventPort.CORRECT)) {
-                this.showHirePanel(username);
-            }
-        });
+        this.eventPort.ifPresent(port -> port.onSignUp(username, password));
     }
 
     @Override
     public void onClickSignIn(final String username, final String password) {
-        this.eventPort.ifPresent(port -> {
-            final String message = port.onSignIn(username, password);
-            if (message.equals(ViewEventPort.CORRECT)) {
-                this.showHirePanel(username);
-            }
-        });
+        this.eventPort.ifPresent(port ->  port.onSignIn(username, password));
     }
 
     @Override
     public void onClickAddCredits(final String credits) {
-        final String message = this.eventPort.isPresent() ?
-                this.eventPort.get().onAddCredits(credits) : NOT_CONNECTED;
-        if (message.equals(ViewEventPort.CORRECT)) {
-            this.hirePanel.setCredits(this.eventPort.get().credits());
-            TimedMessageDialog.showTimedMessage(this, "Credits added", 500);
-        }
-
+        this.eventPort.ifPresent(port -> port.onAddCredits(credits));
     }
 
     @Override
     public List<String> freeEBikes() {
-        final List<String> eBikesFree = new ArrayList<>();
-        this.eventPort.ifPresent(port -> eBikesFree.addAll(port.eBikesFree()));
-        return eBikesFree;
+        return this.eventPort.map(ViewEventPort::eBikesFree).orElse(new ArrayList<>());
     }
 
     @Override
     public void onClickHire(final String eBikeId) {
-        final String message = this.eventPort.isPresent() ?
-                this.eventPort.get().onHireEBike(eBikeId) : NOT_CONNECTED;
-
-        if (message.equals(ViewEventPort.CORRECT)) {
-            this.hirePanel.setCredits(this.eventPort.get().credits());
-            this.hirePanel.showStopHireButton();
-        }
+        this.eventPort.ifPresent(port -> port.onHireEBike(eBikeId));
     }
 
     @Override
     public void onStopHireEBike() {
         this.eventPort.ifPresent(ViewEventPort::onStopHireEBike);
-        this.hirePanel.setCredits(this.eventPort.get().credits());
-        TimedMessageDialog.showTimedMessage(this, "Stop ride ebike", 500);
     }
 
     @Override
     public boolean canHireEBike() {
-        final boolean canHire = this.eventPort.map(ViewEventPort::canHireEBike).orElse(false);
-        if (!canHire) {
-            TimedMessageDialog.showTimedMessage(this, "Have already ebike", 500);
-        }
-        return canHire;
+        return this.eventPort.map(ViewEventPort::canHireEBike).orElse(false);
     }
 
     @Override
     public void onClickLogout() {
-        this.changePanel(this.loginPanel);
         this.eventPort.ifPresent(ViewEventPort::onLogout);
     }
 }

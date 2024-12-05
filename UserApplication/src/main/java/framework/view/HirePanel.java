@@ -101,18 +101,16 @@ public class HirePanel extends JPanel {
         this.listenerHireEvent.onClickLogout();
     }
 
-
-    public void setUserData(final String username, final float credits) {
-        this.usernameValue.setText(username);
-        this.creditsValue.setText(CURRENCY + credits);
+    public void showStopHireButton() {
+        this.hireButton.setVisible(false);
+        this.stopHireButton.setVisible(true);
     }
 
     public void setCredits(final float credits) {
         this.creditsValue.setText(CURRENCY + credits);
     }
 
-    public void showStopHireButton() {
-        this.hireButton.setVisible(false);
-        this.stopHireButton.setVisible(true);
+    public void setUsername(final String username) {
+        this.usernameValue.setText(username);
     }
 }

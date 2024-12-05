@@ -1,8 +1,12 @@
 package application;
 
 import adapter.RideEventPort;
+import application.utils.ThreadUtils;
 
 import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface EBikeControllerPort {
     int WAIT_COST_RIDE = 500;
@@ -13,14 +17,25 @@ public interface EBikeControllerPort {
 
     class EBikeControllerPortImpl extends Thread implements EBikeControllerPort {
         private Optional<RideEventPort> rideEventPort = Optional.empty();
-        private boolean isRiding = false;
+        private boolean isRunning;
+        private boolean isRiding;
+
+        private final Lock mutex;
+        private final Condition condition;
+
+        public EBikeControllerPortImpl() {
+            this.mutex = new ReentrantLock();
+            this.condition = this.mutex.newCondition();
+            this.isRunning = true;
+            this.isRiding = false;
+            this.start();
+        }
 
         @Override
         public void run() {
-            while (this.isRiding) {
-                try {
-                    sleep(WAIT_COST_RIDE);
-                } catch (final InterruptedException ignored) { }
+            while (this.isRunning) {
+                this.waitUntilPlay();
+                ThreadUtils.sleep(WAIT_COST_RIDE);
                 this.rideEventPort.ifPresent(RideEventPort::onRide);
 
                 this.rideEventPort.ifPresent(rideEventPort -> {
@@ -37,16 +52,40 @@ public interface EBikeControllerPort {
             }
         }
 
+        private void waitUntilPlay() {
+            try {
+                this.mutex.lock();
+                while (!this.isRiding) this.condition.await();
+            } catch (final InterruptedException ignored) {
+            } finally {
+                this.mutex.unlock();
+            }
+        }
+
+        private void play() {
+            try {
+                this.mutex.lock();
+                this.isRiding = true;
+                this.condition.signalAll();
+            } finally {
+                this.mutex.unlock();
+            }
+        }
+
         @Override
         public void rideEBike(final RideEventPort rideEventPort) {
             this.rideEventPort = Optional.ofNullable(rideEventPort);
             this.isRiding = true;
-            this.start();
+            this.play();
         }
 
         @Override
         public void stopEBike() {
             this.isRiding = false;
+        }
+
+        public void terminate() {
+            this.isRunning = false;
         }
     }
 }

@@ -27,9 +27,9 @@ public class SignIn {
     }
     @When("The user {string} sign in with wrong username and {string} as password")
     public void theUserSignInWithWrongUsername(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.application.signIn(username, password);
+        final Optional<Message> error = this.application.signIn(username, password);
         assertTrue(error.isPresent());
-        assertEquals(ErrorApplication.NOT_REGISTERED, error.get());
+        assertEquals(Message.Error.NOT_REGISTERED, error.get());
     }
     @Then("The system shows an error message, the user {string} is not registered")
     public void theSystemShowsAnErrorMessageTheUserIsNotRegistered(final String username) {
@@ -39,7 +39,7 @@ public class SignIn {
 
     @Given("The user {string} is registered with {string}")
     public void theUserIsRegistered(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.application.signUp(username, password);
+        final Optional<Message> error = this.application.signUp(username, password);
         assertTrue(error.isEmpty());
         assertTrue(this.application.isRegistered(username));
         this.application.logout();
@@ -47,9 +47,9 @@ public class SignIn {
 
     @When("The user {string} sign in with wrong password {string}")
     public void theUserSignInWithWrongPassword(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.application.signIn(username, password);
+        final Optional<Message> error = this.application.signIn(username, password);
         assertTrue(error.isPresent());
-        assertEquals(ErrorApplication.WRONG_PASSWORD, error.get());
+        assertEquals(Message.Error.WRONG_PASSWORD, error.get());
     }
     @Then("The system shows an error message, the password is wrong")
     public void theSystemShowsAnErrorMessageThePasswordIsWrong() {
@@ -59,9 +59,9 @@ public class SignIn {
 
     @When("The user sign in with empty username or password")
     public void theUserSignInWithEmptyUsernameOrPassword() {
-        final Optional<ErrorApplication> error = this.application.signIn(EMPTY_FIELD, EMPTY_FIELD);
+        final Optional<Message> error = this.application.signIn(EMPTY_FIELD, EMPTY_FIELD);
         assertTrue(error.isPresent());
-        assertEquals(ErrorApplication.EMPTY_FIELD, error.get());
+        assertEquals(Message.Error.EMPTY_FIELD, error.get());
     }
     @Then("The system give an error message, the username or password is empty")
     public void theSystemGiveAnErrorMessageTheUsernameOrPasswordIsEmpty() {
@@ -71,7 +71,7 @@ public class SignIn {
 
     @When("The user sign in with correct username and password, {string} and {string}")
     public void theUserSignInWithCorrectUsernameAndPasswordAnd(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.application.signIn(username, password);
+        final Optional<Message> error = this.application.signIn(username, password);
         assertTrue(error.isEmpty());
     }
     @Then("User access to the service")

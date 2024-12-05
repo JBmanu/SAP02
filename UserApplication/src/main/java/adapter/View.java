@@ -7,4 +7,10 @@ public interface View {
     void setCredits(Float credits);
 
     void showError(String string);
+
+    void hireEBike();
+
+    void showHirePanel(String username);
+
+    void showLoginPanel();
 }

@@ -1,23 +1,21 @@
 package adapter;
 
 import application.Application;
-import application.ErrorApplication;
+import application.Message;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface ViewEventPort {
-    String CORRECT = "Correct";
+    List<String> eBikesFree();
 
-    Collection<String> eBikesFree();
+    void onSignUp(String username, String password);
 
-    String onSignUp(String username, String password);
+    void onSignIn(String username, String password);
 
-    String onSignIn(String username, String password);
+    void onAddCredits(String credits);
 
-    String onAddCredits(String credits);
-
-    String onHireEBike(String eBikeId);
+    void onHireEBike(String eBikeId);
 
     void onStopHireEBike();
 
@@ -37,31 +35,27 @@ public interface ViewEventPort {
         }
 
         @Override
-        public String onSignUp(final String username, final String password) {
-            final Optional<ErrorApplication> error = this.application.signUp(username, password);
-            return error.map(Object::toString).orElse(CORRECT);
+        public void onSignUp(final String username, final String password) {
+            this.application.signUp(username, password);
         }
 
         @Override
-        public String onSignIn(final String username, final String password) {
-            final Optional<ErrorApplication> error = this.application.signIn(username, password);
-            return error.map(Object::toString).orElse(CORRECT);
+        public void onSignIn(final String username, final String password) {
+            this.application.signIn(username, password);
         }
 
         @Override
-        public String onAddCredits(final String credits) {
-            float creditsFloat = 0;
+        public void onAddCredits(final String credits) {
+            final float creditsFloat;
             try {
                 creditsFloat = Float.parseFloat(credits);
+                this.application.addCreditsOf(creditsFloat);
             } catch (final NumberFormatException ignored) {}
-
-            final Optional<ErrorApplication> error = this.application.addCreditsOf(creditsFloat);
-            return error.map(Object::toString).orElse(CORRECT);
         }
 
         @Override
-        public String onHireEBike(final String eBikeId) {
-            return this.application.hireEBike(eBikeId).map(Object::toString).orElse(CORRECT);
+        public void onHireEBike(final String eBikeId) {
+            this.application.hireEBike(eBikeId);
         }
 
         @Override
@@ -70,7 +64,7 @@ public interface ViewEventPort {
         }
 
         @Override
-        public Collection<String> eBikesFree() {
+        public List<String> eBikesFree() {
             return this.application.eBikesIdFree();
         }
 

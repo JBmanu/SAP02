@@ -21,7 +21,7 @@ public class HireEBike {
     private final EBikeRepository eBikeRepository = new EBikeRepositoryImpl();
     private final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl(this.userRepository, this.eBikeRepository);
     private Application application;
-    private Optional<ErrorApplication> error;
+    private Optional<Message> error;
 
     @Given("The user {string} has sign in with password {string}, can to start ride e-bike")
     public void theUserHasSignInWithPasswordCanToStartRideEBike(final String username, final String password) {
@@ -54,7 +54,7 @@ public class HireEBike {
     @Then("The system shows an error message, the user has no credit")
     public void theSystemShowsAnErrorMessageTheUserHasNoCredit() {
         assertTrue(this.error.isPresent());
-        assertEquals(ErrorApplication.ZERO_CREDITS, this.error.get());
+        assertEquals(Message.Error.ZERO_CREDITS, this.error.get());
         assertFalse(this.application.hasHireEBike());
     }
 
@@ -72,7 +72,7 @@ public class HireEBike {
     @Then("The system shows an error message, the e-bike is already in use by another user")
     public void theSystemShowsAnErrorMessageTheEBikeIsAlreadyInUseByAnotherUser() {
         assertTrue(this.error.isPresent());
-        assertEquals(ErrorApplication.EBIKE_IN_USE, this.error.get());
+        assertEquals(Message.Error.EBIKE_IN_USE, this.error.get());
         assertFalse(this.application.hasHireEBike());
     }
 
@@ -86,7 +86,7 @@ public class HireEBike {
     @Then("The system shows an error message, the e-bike has no battery")
     public void theSystemShowsAnErrorMessageTheEBikeHasNoBattery() {
         assertTrue(this.error.isPresent());
-        assertEquals(ErrorApplication.EBIKE_LOW_BATTERY, this.error.get());
+        assertEquals(Message.Error.EBIKE_LOW_BATTERY, this.error.get());
         assertFalse(this.application.hasHireEBike());
     }
 

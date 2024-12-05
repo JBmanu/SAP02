@@ -27,8 +27,8 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
-    public void setEBikeController(final EBikeControllerPort ebikeController) {
-        this.ebikeController = Optional.ofNullable(ebikeController);
+    public void setEBikeController(final EBikeControllerPort eBikeController) {
+        this.ebikeController = Optional.ofNullable(eBikeController);
     }
 
     @Override
@@ -46,35 +46,42 @@ public class ApplicationImpl implements Application {
         return this.repository.map(RepositoryPort::eBikesIdFree).orElse(List.of());
     }
 
-    private void userLogged(final Optional<ErrorApplication> error, final String username, final String password) {
+    private void userLogged(final Optional<Message> error, final String username, final String password) {
         if (this.repository.isEmpty() || error.isPresent()) return;
         final UserFactory userFactory = new UserFactory.SimpleFactory();
         this.user = Optional.of(userFactory.createWithoutCredit(username, password));
     }
 
     @Override
-    public Optional<ErrorApplication> signUp(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.repository.isPresent() ?
+    public Optional<Message> signUp(final String username, final String password) {
+        final Optional<Message> error = this.repository.isPresent() ?
                 this.repository.get().signUp(username, password) : Optional.empty();
         this.userLogged(error, username, password);
-        this.view.ifPresent(view -> view.showError(error));
+        error.ifPresentOrElse(msg -> this.view.ifPresent(view -> view.showMessage(Optional.of(msg))),
+                () -> this.view.ifPresent(view -> view.showHirePanel(username, this.creditsOfUser())));
         return error;
     }
 
     @Override
-    public Optional<ErrorApplication> signIn(final String username, final String password) {
-        final Optional<ErrorApplication> error = this.repository.isPresent() ?
+    public Optional<Message> signIn(final String username, final String password) {
+        final Optional<Message> error = this.repository.isPresent() ?
                 this.repository.get().signIn(username, password) : Optional.empty();
         this.userLogged(error, username, password);
-        this.view.ifPresent(view -> view.showError(error));
+        error.ifPresentOrElse(msg -> this.view.ifPresent(view -> view.showMessage(Optional.of(msg))),
+                () -> this.view.ifPresent(view -> view.showHirePanel(username, this.creditsOfUser())));
         return error;
     }
 
     @Override
-    public Optional<ErrorApplication> addCreditsOf(final float someCredits) {
-        final Optional<ErrorApplication> error = this.user.isPresent() && this.repository.isPresent() ?
+    public Optional<Message> addCreditsOf(final float someCredits) {
+        final Optional<Message> error = this.user.isPresent() && this.repository.isPresent() ?
                 this.repository.get().addCreditsTo(this.user.get().username(), someCredits) : Optional.empty();
-        this.view.ifPresent(view -> view.showError(error));
+        error.ifPresentOrElse(
+                message -> this.view.ifPresent(view -> view.showMessage(error)),
+                () -> {
+                    this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
+                    this.view.ifPresent(view ->view.showMessage(Optional.of(Message.Info.CREDITS_ADDED)));
+                });
         return error;
     }
 
@@ -99,20 +106,26 @@ public class ApplicationImpl implements Application {
     @Override
     public void logout() {
         this.user = Optional.empty();
+        this.view.ifPresent(ViewPort::showLoginPanel);
     }
 
 
     @Override
-    public Optional<ErrorApplication> hireEBike(final String eBikeId) {
-        final Optional<ErrorApplication> error = this.repository.isPresent() && this.user.isPresent() ?
+    public Optional<Message> hireEBike(final String eBikeId) {
+        final Optional<Message> error = this.repository.isPresent() && this.user.isPresent() ?
                 this.repository.get().hireEBike(this.user.get().username(), eBikeId, CREDITS_FOR_HIRE) :
-                Optional.of(ErrorApplication.NOT_CONNECTED);
-        this.view.ifPresent(view -> view.showError(error));
+                Optional.of(Message.Error.NOT_CONNECTED);
+        this.view.ifPresent(view -> view.showMessage(error));
+
         if (error.isEmpty()) {
             final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();
             this.ebike = Optional.of(eBikeFactory.create(eBikeId));
             this.ebikeController.ifPresent(controller ->
                     controller.rideEBike(new RideEventPort.RideEventPortImpl(this)));
+            this.view.ifPresent(view -> {
+                view.showCredits(this.creditsOfUser());
+                view.hireEBike();
+            });
         }
         return error;
     }
@@ -142,18 +155,28 @@ public class ApplicationImpl implements Application {
         this.ebikeController.ifPresent(EBikeControllerPort::stopEBike);
         this.ebike.ifPresent(ebike -> this.repository.ifPresent(repo -> repo.stopEBike(ebike.id())));
         this.ebike = Optional.empty();
+        this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
+        this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Info.STOP_EBIKE)));
     }
 
     @Override
     public boolean eBikesHasLowBattery() {
-        return this.ebike.flatMap(ebike ->
+        final Boolean eBikeHasLowBattery = this.ebike.flatMap(ebike ->
                         this.repository.map(repo -> repo.isLowBatteryEBike(ebike.id())))
                 .orElse(false);
+        if (eBikeHasLowBattery) {
+            this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Error.EBIKE_LOW_BATTERY)));
+        }
+        return eBikeHasLowBattery;
     }
 
     @Override
     public boolean userHasCredits() {
-        return this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
+        final boolean hasCredits = this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
+        if (!hasCredits) {
+            this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Error.ZERO_CREDITS)));
+        }
+        return hasCredits;
     }
 
     @Override

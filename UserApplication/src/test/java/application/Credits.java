@@ -25,9 +25,9 @@ public class Credits {
 
     @When("The user add negative credit {float}")
     public void theUserAddNegativeCredit(final float negativeCredits) {
-        final Optional<ErrorApplication> error = this.application.addCreditsOf(negativeCredits);
+        final Optional<Message> error = this.application.addCreditsOf(negativeCredits);
         assertTrue(error.isPresent());
-        assertEquals(ErrorApplication.ADD_NEGATIVE_CREDITS, error.get());
+        assertEquals(Message.Error.ADD_NEGATIVE_CREDITS, error.get());
     }
     @Then("The system shows an error message, the credit is negative")
     public void theSystemShowsAnErrorMessageTheCreditIsNegative() {
@@ -38,7 +38,7 @@ public class Credits {
 
     @When("The user add some credit")
     public void theUserAddSomeCredit() {
-        final Optional<ErrorApplication> error = this.application.addCreditsOf(SOME_CREDITS);
+        final Optional<Message> error = this.application.addCreditsOf(SOME_CREDITS);
         assertTrue(error.isEmpty());
     }
     @Then("The system notify add credit")
@@ -51,9 +51,9 @@ public class Credits {
     @When("The user add empty credit")
     public void theUserAddEmptyCredit() {
         final float zeroCredits = 0f;
-        final Optional<ErrorApplication> error = this.application.addCreditsOf(zeroCredits);
+        final Optional<Message> error = this.application.addCreditsOf(zeroCredits);
         assertTrue(error.isPresent());
-        assertEquals(ErrorApplication.ADD_ZERO_CREDITS, error.get());
+        assertEquals(Message.Error.ADD_ZERO_CREDITS, error.get());
     }
     @Then("The system shows an error message, the credit is empty")
     public void theSystemShowsAnErrorMessageTheCreditIsEmpty() {

@@ -13,13 +13,13 @@ public interface RepositoryPort {
 
     boolean contain(String username);
 
-    Optional<ErrorApplication> signUp(String username, String password);
-    Optional<ErrorApplication> signIn(String username, String password);
-    Optional<ErrorApplication> addCreditsTo(String username, float someCredits);
+    Optional<Message> signUp(String username, String password);
+    Optional<Message> signIn(String username, String password);
+    Optional<Message> addCreditsTo(String username, float someCredits);
 
     Optional<Float> creditsOf(String username);
 
-    Optional<ErrorApplication> hireEBike(String username, String eBikeId, float withoutCredits);
+    Optional<Message> hireEBike(String username, String eBikeId, float withoutCredits);
     boolean isFreeEBike(String eBikeId);
     boolean isInUseEBike(String eBikeId);
     boolean isLowBatteryEBike(String eBikeId);
@@ -55,31 +55,31 @@ public interface RepositoryPort {
         }
 
         @Override
-        public Optional<ErrorApplication> signUp(final String username, final String password) {
+        public Optional<Message> signUp(final String username, final String password) {
             final boolean emptyFields = username.isBlank() || password.isBlank();
             if (emptyFields)
-                return Optional.of(ErrorApplication.EMPTY_FIELD);
+                return Optional.of(Message.Error.EMPTY_FIELD);
             return this.userRepository.add(username, password) ?
-                    Optional.empty() : Optional.of(ErrorApplication.SAME_USERNAME);
+                    Optional.empty() : Optional.of(Message.Error.SAME_USERNAME);
         }
 
         @Override
-        public Optional<ErrorApplication> signIn(final String username, final String password) {
+        public Optional<Message> signIn(final String username, final String password) {
             final boolean emptyFields = username.isBlank() || password.isBlank();
             if (emptyFields)
-                return Optional.of(ErrorApplication.EMPTY_FIELD);
+                return Optional.of(Message.Error.EMPTY_FIELD);
             if (!this.contain(username))
-                return Optional.of(ErrorApplication.NOT_REGISTERED);
+                return Optional.of(Message.Error.NOT_REGISTERED);
             return this.userRepository.checkPasswordOf(username, password) ?
-                    Optional.empty() : Optional.of(ErrorApplication.WRONG_PASSWORD);
+                    Optional.empty() : Optional.of(Message.Error.WRONG_PASSWORD);
         }
 
         @Override
-        public Optional<ErrorApplication> addCreditsTo(final String username, final float someCredits) {
-            if (someCredits < 0) return Optional.of(ErrorApplication.ADD_NEGATIVE_CREDITS);
-            if (someCredits == 0) return Optional.of(ErrorApplication.ADD_ZERO_CREDITS);
+        public Optional<Message> addCreditsTo(final String username, final float someCredits) {
+            if (someCredits < 0) return Optional.of(Message.Error.ADD_NEGATIVE_CREDITS);
+            if (someCredits == 0) return Optional.of(Message.Error.ADD_ZERO_CREDITS);
             if (!this.userRepository.addCreditsTo(username, someCredits))
-                return Optional.of(ErrorApplication.NOT_LOGGED);
+                return Optional.of(Message.Error.NOT_LOGGED);
             return Optional.empty();
         }
 
@@ -89,11 +89,11 @@ public interface RepositoryPort {
         }
 
         @Override
-        public Optional<ErrorApplication> hireEBike(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
-            if (this.isInUseEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_IN_USE);
-            if (this.isLowBatteryEBike(eBikeId)) return Optional.of(ErrorApplication.EBIKE_LOW_BATTERY);
+        public Optional<Message> hireEBike(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
+            if (this.isInUseEBike(eBikeId)) return Optional.of(Message.Error.EBIKE_IN_USE);
+            if (this.isLowBatteryEBike(eBikeId)) return Optional.of(Message.Error.EBIKE_LOW_BATTERY);
             final boolean canHire = this.userRepository.withdrawCredits(username, WITHOUT_CREDITS);
-            if (!canHire) return Optional.of(ErrorApplication.ZERO_CREDITS);
+            if (!canHire) return Optional.of(Message.Error.ZERO_CREDITS);
             this.ebikeRepository.hireEBike(eBikeId);
             return Optional.empty();
         }
