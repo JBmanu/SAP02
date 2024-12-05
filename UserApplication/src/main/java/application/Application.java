@@ -27,5 +27,5 @@ public interface Application {
     boolean isInUseEBike(String eBikeId);
     boolean isLowBatteryEBike(String eBikeId);
     boolean hasHireEBike();
-
+    void stopEBike();
 }

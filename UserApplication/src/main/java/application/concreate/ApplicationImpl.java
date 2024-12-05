@@ -134,4 +134,10 @@ public class ApplicationImpl implements Application {
         return this.ebike.isPresent();
     }
 
+    @Override
+    public void stopEBike() {
+        this.ebike.ifPresent(ebike -> this.repository.ifPresent(repo -> repo.stopEBike(ebike.id())));
+        this.ebike = Optional.empty();
+    }
+
 }

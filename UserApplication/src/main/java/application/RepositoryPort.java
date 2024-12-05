@@ -24,6 +24,7 @@ public interface RepositoryPort {
     boolean isInUseEBike(String eBikeId);
     boolean isLowBatteryEBike(String eBikeId);
 
+    void stopEBike(String id);
 
 
     class RepositoryPortImpl implements RepositoryPort {
@@ -107,6 +108,11 @@ public interface RepositoryPort {
         @Override
         public boolean isLowBatteryEBike(final String eBikeId) {
             return this.ebikeRepository.isLowBattery(eBikeId);
+        }
+
+        @Override
+        public void stopEBike(final String id) {
+            this.ebikeRepository.stopEBike(id);
         }
     }
 }

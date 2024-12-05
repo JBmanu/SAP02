@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StartHireEBike {
+public class HireEBike {
     public static final float SOME_CREDITS = 100f;
     public static final float ZERO_CREDITS = 0;
     private final UserRepository userRepository = new UserRepositoryImpl();
