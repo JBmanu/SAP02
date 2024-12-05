@@ -2,6 +2,7 @@ package entity.ebike;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Optional;
 
 public interface EBikeRepository {
     List<String> eBikesIdFree();
@@ -24,4 +25,10 @@ public interface EBikeRepository {
     void setLowBattery(String eBikeId);
 
     void consumeBattery(String id, int consumeBattery);
+
+    Optional<Integer> batteryOf(String id);
+
+    Optional<Point2D> positionOf(String id);
+
+    Optional<EBikeState> stateOf(String id);
 }

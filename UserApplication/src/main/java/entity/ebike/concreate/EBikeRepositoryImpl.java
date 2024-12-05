@@ -3,10 +3,12 @@ package entity.ebike.concreate;
 import entity.ebike.EBike;
 import entity.ebike.EBikeFactory;
 import entity.ebike.EBikeRepository;
+import entity.ebike.EBikeState;
 
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 public class EBikeRepositoryImpl implements EBikeRepository {
     private final EBikeFactory ebikeFactory;
@@ -107,9 +109,33 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
-    public void consumeBattery(String id, int consumeBattery) {
+    public void consumeBattery(final String id, final int consumeBattery) {
         this.ebikes.stream()
                 .filter(ebike -> ebike.id().equals(id))
                 .forEach(ebike -> ebike.consumeBattery(consumeBattery));
+    }
+
+    @Override
+    public Optional<Integer> batteryOf(final String id) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(id))
+                .findFirst()
+                .map(EBike::battery);
+    }
+
+    @Override
+    public Optional<Point2D> positionOf(final String id) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(id))
+                .findFirst()
+                .map(EBike::position);
+    }
+
+    @Override
+    public Optional<EBikeState> stateOf(final String id) {
+        return this.ebikes.stream()
+                .filter(ebike -> ebike.id().equals(id))
+                .findFirst()
+                .map(EBike::state);
     }
 }

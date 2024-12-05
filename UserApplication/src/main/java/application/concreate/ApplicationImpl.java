@@ -4,9 +4,11 @@ import adapter.RideEventPort;
 import application.*;
 import entity.ebike.EBike;
 import entity.ebike.EBikeFactory;
+import entity.ebike.EBikeState;
 import entity.user.User;
 import entity.user.UserFactory;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Optional;
 
@@ -191,6 +193,32 @@ public class ApplicationImpl implements Application {
     public void consumeBattery() {
         this.ebike.ifPresent(ebike ->
                 this.repository.ifPresent(repo -> repo.consumeBattery(ebike.id(), CONSUME_BATTERY)));
+    }
+
+    @Override
+    public Optional<String> eBikeId() {
+        return this.ebike.map(EBike::id);
+    }
+
+    @Override
+    public Optional<Integer> eBikeBattery() {
+        return this.ebike.flatMap(eBike ->
+                        this.repository.map(repo -> repo.batteryOf(eBike.id())))
+                .orElse(Optional.empty());
+    }
+
+    @Override
+    public Optional<Point2D> eBikePosition() {
+        return this.ebike.flatMap(eBike ->
+                this.repository.map(repo -> repo.positionOf(eBike.id())))
+                .orElse(Optional.empty());
+    }
+
+    @Override
+    public Optional<EBikeState> eBikeState() {
+        return this.ebike.flatMap(eBike ->
+                this.repository.map(repo -> repo.stateOf(eBike.id())))
+                .orElse(Optional.empty());
     }
 
 }

@@ -1,5 +1,8 @@
 package application;
 
+import entity.ebike.EBikeState;
+
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +39,9 @@ public interface Application {
     boolean userHasCredits();
     void withdrawCredits();
     void consumeBattery();
+
+    Optional<String> eBikeId();
+    Optional<Integer> eBikeBattery();
+    Optional<Point2D> eBikePosition();
+    Optional<EBikeState> eBikeState();
 }

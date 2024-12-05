@@ -1,10 +1,12 @@
 package application;
 
 import entity.ebike.EBikeRepository;
+import entity.ebike.EBikeState;
 import entity.ebike.concreate.EBikeRepositoryImpl;
 import entity.user.UserRepository;
 import entity.user.concreate.UserRepositoryImpl;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,12 @@ public interface RepositoryPort {
     void withdrawCredits(String username, float someCredits);
 
     void consumeBattery(String id, int consumeBattery);
+
+    Optional<Integer> batteryOf(String id);
+
+    Optional<Point2D> positionOf(String id);
+
+    Optional<EBikeState> stateOf(String id);
 
     class RepositoryPortImpl implements RepositoryPort {
         private final UserRepository userRepository;
@@ -126,6 +134,21 @@ public interface RepositoryPort {
         @Override
         public void consumeBattery(final String id, final int consumeBattery) {
             this.ebikeRepository.consumeBattery(id, consumeBattery);
+        }
+
+        @Override
+        public Optional<Integer> batteryOf(final String id) {
+            return this.ebikeRepository.batteryOf(id);
+        }
+
+        @Override
+        public Optional<Point2D> positionOf(final String id) {
+            return this.ebikeRepository.positionOf(id);
+        }
+
+        @Override
+        public Optional<EBikeState> stateOf(final String id) {
+            return this.ebikeRepository.stateOf(id);
         }
 
     }
