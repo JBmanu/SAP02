@@ -1,5 +1,6 @@
 package application.concreate;
 
+import adapter.RideEventPort;
 import application.*;
 import entity.ebike.EBike;
 import entity.ebike.EBikeFactory;
@@ -10,8 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApplicationImpl implements Application {
-    private static final float WITHOUT_CREDITS = 10f;
-    private Optional<EbikeControllerPort> ebikeController;
+    private Optional<EBikeControllerPort> ebikeController;
     private Optional<RepositoryPort> repository;
     private Optional<UserViewPort> userView;
 
@@ -27,7 +27,7 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
-    public void setEBikeController(final EbikeControllerPort ebikeController) {
+    public void setEBikeController(final EBikeControllerPort ebikeController) {
         this.ebikeController = Optional.ofNullable(ebikeController);
     }
 
@@ -105,11 +105,13 @@ public class ApplicationImpl implements Application {
     @Override
     public Optional<ErrorApplication> hireEBike(final String eBikeId) {
         final Optional<ErrorApplication> error = this.repository.isPresent() && this.user.isPresent() ?
-                this.repository.get().hireEBike(this.user.get().username(), eBikeId, WITHOUT_CREDITS) :
+                this.repository.get().hireEBike(this.user.get().username(), eBikeId, CREDITS_FOR_HIRE) :
                 Optional.of(ErrorApplication.NOT_CONNECTED);
         if (error.isEmpty()) {
             final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();
             this.ebike = Optional.of(eBikeFactory.create(eBikeId));
+            this.ebikeController.ifPresent(controller ->
+                    controller.rideEBike(new RideEventPort.RideEventPortImpl(this)));
         }
         return error;
     }
@@ -136,8 +138,21 @@ public class ApplicationImpl implements Application {
 
     @Override
     public void stopEBike() {
+        this.ebikeController.ifPresent(EBikeControllerPort::stopEBike);
         this.ebike.ifPresent(ebike -> this.repository.ifPresent(repo -> repo.stopEBike(ebike.id())));
         this.ebike = Optional.empty();
+    }
+
+    @Override
+    public boolean userHasCredits() {
+        return this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
+    }
+
+    @Override
+    public void withdrawCredits() {
+        this.user.ifPresent(user ->
+                this.repository.ifPresent(repo ->
+                        repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
     }
 
 }

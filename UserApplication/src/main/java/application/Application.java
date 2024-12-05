@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Application {
+    float CREDITS_FOR_HIRE = 10f;
+    float CREDITS_FOR_RIDE = 0.5f;
 
-    void setEBikeController(EbikeControllerPort ebikeController);
+    void setEBikeController(EBikeControllerPort ebikeController);
     void setRepository(RepositoryPort repository);
     void setUserView(UserViewPort userView);
 
@@ -28,4 +30,7 @@ public interface Application {
     boolean isLowBatteryEBike(String eBikeId);
     boolean hasHireEBike();
     void stopEBike();
+
+    boolean userHasCredits();
+    void withdrawCredits();
 }
