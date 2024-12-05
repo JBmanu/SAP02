@@ -29,12 +29,16 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     private void changePanel(final JPanel panel) {
+        // da vedere bene la dimensione solo
         this.getContentPane().removeAll();
         this.add(panel, BorderLayout.CENTER);
         this.setSize(panel.getSize());
         this.setLocationRelativeTo(null);
         this.revalidate();
         this.repaint();
+        SwingUtilities.invokeLater(() -> {
+
+        });
     }
 
     @Override
@@ -42,12 +46,18 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
         this.eventPort = Optional.ofNullable(eventPort);
     }
 
+    private void showHirePanel(final String username) {
+        this.eventPort.ifPresent(port ->
+                this.hirePanel.setUserData(username, port.credits()));
+        this.changePanel(this.hirePanel);
+    }
+
     @Override
     public String onClickSignUp(final String username, final String password) {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onSignUp(username, password) : NOT_CONNECTED;
         if (message.equals(UserViewEventPort.CORRECT)) {
-            this.changePanel(this.hirePanel);
+            this.showHirePanel(username);
         }
         return message;
     }
@@ -57,8 +67,29 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
         final String message = this.eventPort.isPresent() ?
                 this.eventPort.get().onSignIn(username, password) : NOT_CONNECTED;
         if (message.equals(UserViewEventPort.CORRECT)) {
-            this.changePanel(this.hirePanel);
+            this.showHirePanel(username);
         }
         return message;
+    }
+
+    @Override
+    public String onClickAddCredits(final String credits) {
+        final String message = this.eventPort.isPresent() ?
+                this.eventPort.get().onAddCredits(credits) : NOT_CONNECTED;
+        if (message.equals(UserViewEventPort.CORRECT)) {
+            this.hirePanel.setCredits(this.eventPort.get().credits());
+        }
+        return message;
+    }
+
+    @Override
+    public void onClickHire(final String eBikeId) {
+
+    }
+
+    @Override
+    public void onClickLogout() {
+        this.changePanel(this.loginPanel);
+        this.eventPort.ifPresent(UserViewEventPort::onLogout);
     }
 }
