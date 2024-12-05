@@ -70,6 +70,11 @@ public class HirePanel extends JPanel {
     }
 
     private void onClickHireButton(final ActionEvent event) {
+        if (!this.listenerHireEvent.canHireEBike()) {
+            TimedMessageDialog.showTimedMessage("Have already ebike", 500);
+            return;
+        }
+
         this.eBikesIdFreePopupMenu.show(this, this.hireButton.getX(), this.hireButton.getY());
         final String[] eBikesIdFree = this.listenerHireEvent.freeEBikes().toArray(new String[0]);
         final JList<String> list = new JList<>(eBikesIdFree);

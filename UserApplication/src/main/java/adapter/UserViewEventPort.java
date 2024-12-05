@@ -23,6 +23,8 @@ public interface UserViewEventPort {
 
     float credits();
 
+    boolean canHireEBike();
+
 
     class UserViewEventPortImpl implements UserViewEventPort {
         private final Application application;
@@ -72,6 +74,11 @@ public interface UserViewEventPort {
         @Override
         public float credits() {
             return this.application.creditsOfUser().orElse(0f);
+        }
+
+        @Override
+        public boolean canHireEBike() {
+            return !this.application.hasHireEBike();
         }
     }
 }

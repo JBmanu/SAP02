@@ -104,6 +104,11 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     @Override
+    public boolean canHireEBike() {
+        return this.eventPort.map(UserViewEventPort::canHireEBike).orElse(false);
+    }
+
+    @Override
     public void onClickLogout() {
         this.changePanel(this.loginPanel);
         this.eventPort.ifPresent(UserViewEventPort::onLogout);

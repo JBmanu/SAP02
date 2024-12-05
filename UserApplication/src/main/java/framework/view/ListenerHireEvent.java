@@ -11,6 +11,8 @@ public interface ListenerHireEvent {
 
     String onClickHire(String eBikeId);
 
+    boolean canHireEBike();
+
     void onClickLogout();
 
 }
