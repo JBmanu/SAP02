@@ -22,6 +22,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public HashSet<User> users() {
+        return this.users;
+    }
+
+    @Override
     public boolean add(final User user) {
         return this.users.add(user);
     }
@@ -45,6 +50,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public boolean withdrawCredits(final String username, final float amount) {
+        final Optional<User> optionalUser = this.users.stream()
+                .filter(user -> user.username().equals(username) && user.hasSufficientCredits(amount))
+                .findFirst();
+        return optionalUser.map(user -> {
+            user.withdrawCredits(amount);
+            return true;
+        }).orElse(false);
+    }
+
+    @Override
     public boolean contains(final String username) {
         return this.users.stream().anyMatch(user -> user.username().equals(username));
     }
@@ -64,7 +80,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean checkPasswordOf(final String username, final String password) {
+    public boolean authentication(final String username, final String password) {
         return this.users.stream().anyMatch(user -> user.username().equals(username)
                 && user.password().equals(password));
 

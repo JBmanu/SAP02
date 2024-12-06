@@ -44,6 +44,11 @@ public class UserImpl implements User {
     }
 
     @Override
+    public boolean hasSufficientCredits(final float amount) {
+        return this.credits >= amount;
+    }
+
+    @Override
     public int hashCode() {
         return this.username().hashCode();
     }

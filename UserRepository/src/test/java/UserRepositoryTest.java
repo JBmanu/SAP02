@@ -81,7 +81,7 @@ public class UserRepositoryTest {
         final String password = "password";
         final User user = this.userFactory.createWithoutCredit(username, password);
         this.userRepository.add(user);
-        assertTrue(this.userRepository.checkPasswordOf(username, password));
+        assertTrue(this.userRepository.authentication(username, password));
     }
 
 }

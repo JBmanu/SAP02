@@ -1,10 +1,12 @@
 package domain;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 public interface UserRepository {
     int count();
 
+    HashSet<User> users();
 
     boolean add(User user);
 
@@ -14,6 +16,8 @@ public interface UserRepository {
 
     boolean addCreditsTo(String username, float amount);
 
+    boolean withdrawCredits(String username, float amount);
+
 
     boolean contains(String username);
 
@@ -21,5 +25,6 @@ public interface UserRepository {
 
     Optional<Float> creditsOf(String username);
 
-    boolean checkPasswordOf(String username, String password);
+    boolean authentication(String username, String password);
+
 }

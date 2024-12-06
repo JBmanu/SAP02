@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
-    public static final int ZERO_CREDITS = 0;
     private final UserFactory userFactory;
     private final HashSet<User> users;
 
@@ -47,7 +46,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean withdrawCredits(final String username, final float amount) {
-        // TODO: PENSARE COME CONTROLLARE QUANDO HO CREDITO NEGATIVO
         final Optional<User> optionalUser = this.users.stream()
                 .filter(user -> user.username().equals(username) && user.hasSufficientCredits(amount))
                 .findFirst();
