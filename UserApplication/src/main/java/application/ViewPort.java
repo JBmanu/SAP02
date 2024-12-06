@@ -19,6 +19,12 @@ public interface ViewPort {
 
     void showEBikeId(Optional<String> eBikeId);
 
+    void stopEBike(Optional<Float> credits);
+
+    void showLowBatteryMessage(boolean eBikeHasLowBattery);
+
+    void showHasCreditsMessage(boolean hasCredits);
+
 
     class ViewPortImpl implements ViewPort {
         private final View view;
@@ -61,6 +67,27 @@ public interface ViewPort {
         @Override
         public void showEBikeId(final Optional<String> eBikeId) {
             eBikeId.ifPresent(this.view::setEBikeId);
+        }
+
+        @Override
+        public void stopEBike(final Optional<Float> credits) {
+            this.showCredits(credits);
+            this.showMessage(Optional.of(Message.Info.STOP_EBIKE));
+            this.view.stopEBike();
+        }
+
+        @Override
+        public void showLowBatteryMessage(final boolean eBikeHasLowBattery) {
+            if (eBikeHasLowBattery) {
+                this.showMessage(Optional.of(Message.Error.EBIKE_LOW_BATTERY));
+            }
+        }
+
+        @Override
+        public void showHasCreditsMessage(final boolean hasCredits) {
+            if (!hasCredits) {
+                this.showMessage(Optional.of(Message.Error.ZERO_CREDITS));
+            }
         }
 
     }

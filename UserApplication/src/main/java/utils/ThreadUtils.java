@@ -1,4 +1,4 @@
-package application.utils;
+package utils;
 
 public final class ThreadUtils {
 

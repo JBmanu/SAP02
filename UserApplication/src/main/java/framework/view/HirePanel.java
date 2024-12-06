@@ -108,6 +108,11 @@ public class HirePanel extends JPanel {
         this.stopHireButton.setVisible(true);
     }
 
+    public void showHireButton() {
+        this.hireButton.setVisible(true);
+        this.stopHireButton.setVisible(false);
+    }
+
     public void setCredits(final float credits) {
         this.creditsValue.setText(CURRENCY + credits);
     }
@@ -123,4 +128,6 @@ public class HirePanel extends JPanel {
     public void setEBikeId(final String string) {
         this.eBikePanel.setId(string);
     }
+
+
 }

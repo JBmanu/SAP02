@@ -4,7 +4,7 @@ import application.Application;
 import application.EBikeControllerPort;
 import application.RepositoryPort;
 import application.concreate.ApplicationImpl;
-import application.utils.ThreadUtils;
+import utils.ThreadUtils;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

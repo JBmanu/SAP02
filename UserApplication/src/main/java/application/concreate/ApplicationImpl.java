@@ -31,6 +31,7 @@ public class ApplicationImpl implements Application {
     @Override
     public void setEBikeController(final EBikeControllerPort eBikeController) {
         this.ebikeController = Optional.ofNullable(eBikeController);
+        this.ebikeController.ifPresent(controller -> controller.setRideEventPort(new RideEventPort.RideEventPortImpl(this)));
     }
 
     @Override
@@ -122,8 +123,7 @@ public class ApplicationImpl implements Application {
         if (error.isEmpty()) {
             final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();
             this.ebike = Optional.of(eBikeFactory.create(eBikeId));
-            this.ebikeController.ifPresent(controller ->
-                    controller.rideEBike(new RideEventPort.RideEventPortImpl(this)));
+            this.ebikeController.ifPresent(EBikeControllerPort::rideEBike);
             this.view.ifPresent(view -> {
                 view.showCredits(this.creditsOfUser());
                 view.showEBikeId(this.eBikeId());
@@ -158,35 +158,27 @@ public class ApplicationImpl implements Application {
         this.ebikeController.ifPresent(EBikeControllerPort::stopEBike);
         this.ebike.ifPresent(ebike -> this.repository.ifPresent(repo -> repo.stopEBike(ebike.id())));
         this.ebike = Optional.empty();
-        this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
-        this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Info.STOP_EBIKE)));
+        this.view.ifPresent(view -> view.stopEBike(this.creditsOfUser()));
     }
 
     @Override
     public boolean eBikesHasLowBattery() {
-        final Boolean eBikeHasLowBattery = this.ebike.flatMap(ebike ->
-                        this.repository.map(repo -> repo.isLowBatteryEBike(ebike.id())))
-                .orElse(false);
-        if (eBikeHasLowBattery) {
-            this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Error.EBIKE_LOW_BATTERY)));
-        }
+        final boolean eBikeHasLowBattery = this.ebike.map(ebike -> this.isLowBatteryEBike(ebike.id())).orElse(false);
+        this.view.ifPresent(view -> view.showLowBatteryMessage(eBikeHasLowBattery));
         return eBikeHasLowBattery;
     }
 
     @Override
     public boolean userHasCredits() {
         final boolean hasCredits = this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
-        if (!hasCredits) {
-            this.view.ifPresent(view -> view.showMessage(Optional.of(Message.Error.ZERO_CREDITS)));
-        }
+        this.view.ifPresent(view -> view.showHasCreditsMessage(hasCredits));
         return hasCredits;
     }
 
     @Override
     public void withdrawCredits() {
         this.user.ifPresent(user ->
-                this.repository.ifPresent(repo ->
-                        repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
+                this.repository.ifPresent(repo -> repo.withdrawCredits(user.username(), CREDITS_FOR_RIDE)));
         this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
     }
 
@@ -204,22 +196,19 @@ public class ApplicationImpl implements Application {
 
     @Override
     public Optional<Integer> eBikeBattery() {
-        return this.ebike.flatMap(eBike ->
-                        this.repository.map(repo -> repo.batteryOf(eBike.id())))
+        return this.ebike.flatMap(eBike -> this.repository.map(repo -> repo.batteryOf(eBike.id())))
                 .orElse(Optional.empty());
     }
 
     @Override
     public Optional<Point2D> eBikePosition() {
-        return this.ebike.flatMap(eBike ->
-                this.repository.map(repo -> repo.positionOf(eBike.id())))
+        return this.ebike.flatMap(eBike -> this.repository.map(repo -> repo.positionOf(eBike.id())))
                 .orElse(Optional.empty());
     }
 
     @Override
     public Optional<EBikeState> eBikeState() {
-        return this.ebike.flatMap(eBike ->
-                this.repository.map(repo -> repo.stateOf(eBike.id())))
+        return this.ebike.flatMap(eBike -> this.repository.map(repo -> repo.stateOf(eBike.id())))
                 .orElse(Optional.empty());
     }
 

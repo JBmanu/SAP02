@@ -1,7 +1,7 @@
 package application;
 
 import adapter.RideEventPort;
-import application.utils.ThreadUtils;
+import utils.ThreadUtils;
 
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
@@ -10,10 +10,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public interface EBikeControllerPort {
     int WAIT_COST_RIDE = 500;
+    int WAIT_STOP_EBIKE = 600;
 
-    void rideEBike(RideEventPort rideEventPort);
+    void rideEBike();
 
     void stopEBike();
+
+    void setRideEventPort(RideEventPort.RideEventPortImpl rideEventPort);
 
     class EBikeControllerPortImpl extends Thread implements EBikeControllerPort {
         private Optional<RideEventPort> rideEventPort = Optional.empty();
@@ -39,14 +42,9 @@ public interface EBikeControllerPort {
                 this.rideEventPort.ifPresent(RideEventPort::onRide);
 
                 this.rideEventPort.ifPresent(rideEventPort -> {
-                    if (!rideEventPort.userHaveCredits()) {
-                        rideEventPort.stopRide();
-                    }
-                });
-
-                this.rideEventPort.ifPresent(rideEventPort -> {
-                    if (rideEventPort.eBikeIsLowBattery()) {
-                        rideEventPort.stopRide();
+                    if (!rideEventPort.userHaveCredits() || rideEventPort.eBikeIsLowBattery()) {
+                        ThreadUtils.sleep(WAIT_STOP_EBIKE);
+                        rideEventPort.stopEBike();
                     }
                 });
             }
@@ -73,8 +71,7 @@ public interface EBikeControllerPort {
         }
 
         @Override
-        public void rideEBike(final RideEventPort rideEventPort) {
-            this.rideEventPort = Optional.ofNullable(rideEventPort);
+        public void rideEBike() {
             this.isRiding = true;
             this.play();
         }
@@ -82,6 +79,11 @@ public interface EBikeControllerPort {
         @Override
         public void stopEBike() {
             this.isRiding = false;
+        }
+
+        @Override
+        public void setRideEventPort(final RideEventPort.RideEventPortImpl rideEventPort) {
+            this.rideEventPort = Optional.ofNullable(rideEventPort);
         }
 
         public void terminate() {

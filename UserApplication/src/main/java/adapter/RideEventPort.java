@@ -8,7 +8,7 @@ public interface RideEventPort {
 
     boolean userHaveCredits();
 
-    void stopRide();
+    void stopEBike();
 
     boolean eBikeIsLowBattery();
 
@@ -31,7 +31,7 @@ public interface RideEventPort {
         }
 
         @Override
-        public void stopRide() {
+        public void stopEBike() {
             this.application.stopEBike();
         }
 

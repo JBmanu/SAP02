@@ -10,6 +10,8 @@ public interface View {
 
     void hireEBike();
 
+    void stopEBike();
+
     void showHirePanel(String username);
 
     void showLoginPanel();
@@ -17,4 +19,5 @@ public interface View {
     void setBattery(Integer integer);
 
     void setEBikeId(String eBikeId);
+
 }

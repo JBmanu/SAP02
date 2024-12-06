@@ -64,6 +64,11 @@ public class ViewImpl extends JFrame implements View, ListenerHireEvent {
     }
 
     @Override
+    public void stopEBike() {
+        this.hirePanel.showHireButton();
+    }
+
+    @Override
     public void showHirePanel(final String username) {
         this.hirePanel.setUsername(username);
         this.changePanel(this.hirePanel);
