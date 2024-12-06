@@ -10,6 +10,8 @@ import entity.ebike.concreate.EBikeRepositoryImpl;
 import entity.user.UserRepository;
 import entity.user.concreate.UserRepositoryImpl;
 import framework.view.ViewImpl;
+import org.springframework.web.client.RestTemplate;
+
 
 public final class Launcher {
     public static void main(final String[] args) {
@@ -33,6 +35,17 @@ public final class Launcher {
 //        final UserViewEventPort userViewEventPort1 = new UserViewEventPort.UserViewEventPortImpl(application1);
 //        final View view1 = new ViewImpl();
 //        view1.setEventPort(userViewEventPort1);
+
+
+        final RestTemplate restTemplate = new RestTemplate();
+        final String url = "http://localhost:3000/users";
+
+        try {
+            final String response = restTemplate.getForObject(url, String.class);
+            System.out.println(response);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
