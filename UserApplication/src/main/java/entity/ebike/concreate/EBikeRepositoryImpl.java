@@ -45,6 +45,11 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
+    public boolean hasEBike() {
+        return !this.ebikes.isEmpty();
+    }
+
+    @Override
     public boolean hireEBike(final String id) {
         return this.ebikes.stream()
                 .filter(ebike -> ebike.id().equals(id))

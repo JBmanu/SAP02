@@ -64,21 +64,16 @@ public interface RepositoryPort {
 
         @Override
         public Optional<Message> signUp(final String username, final String password) {
-            final boolean emptyFields = username.isBlank() || password.isBlank();
-            if (emptyFields)
-                return Optional.of(Message.Error.EMPTY_FIELD);
+            if (username.isBlank() || password.isBlank()) return Optional.of(Message.Error.EMPTY_FIELD);
             return this.userRepository.add(username, password) ?
                     Optional.empty() : Optional.of(Message.Error.SAME_USERNAME);
         }
 
         @Override
         public Optional<Message> signIn(final String username, final String password) {
-            final boolean emptyFields = username.isBlank() || password.isBlank();
-            if (emptyFields)
-                return Optional.of(Message.Error.EMPTY_FIELD);
-            if (!this.contain(username))
-                return Optional.of(Message.Error.NOT_REGISTERED);
-            return this.userRepository.checkPasswordOf(username, password) ?
+            if (username.isBlank() || password.isBlank()) return Optional.of(Message.Error.EMPTY_FIELD);
+            if (!this.contain(username)) return Optional.of(Message.Error.NOT_REGISTERED);
+            return this.userRepository.authentication(username, password) ?
                     Optional.empty() : Optional.of(Message.Error.WRONG_PASSWORD);
         }
 
@@ -98,6 +93,7 @@ public interface RepositoryPort {
 
         @Override
         public Optional<Message> hireEBike(final String username, final String eBikeId, final float WITHOUT_CREDITS) {
+            if (!this.ebikeRepository.hasEBike()) return Optional.of(Message.Error.NO_EBIKES);
             if (this.isInUseEBike(eBikeId)) return Optional.of(Message.Error.EBIKE_IN_USE);
             if (this.isLowBatteryEBike(eBikeId)) return Optional.of(Message.Error.EBIKE_LOW_BATTERY);
             final boolean canHire = this.userRepository.withdrawCredits(username, WITHOUT_CREDITS);

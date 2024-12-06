@@ -16,7 +16,7 @@ public interface UserRepository {
 
     boolean withdrawCredits(String username, float amount);
 
-    boolean checkPasswordOf(String username, String password);
+    boolean authentication(String username, String password);
 
     boolean contains(String username);
 

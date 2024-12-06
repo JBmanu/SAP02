@@ -7,23 +7,23 @@ import java.util.Optional;
 public interface ViewPort {
     void showMessage(Optional<Message> error);
 
+    void showLowBatteryMessage();
+
+    void showHasCreditsMessage();
+
     void showCredits(Optional<Float> credits);
 
-    void hireEBike();
+    void showBattery(Optional<Integer> battery);
 
     void showHirePanel(String username, Optional<Float> credits);
 
     void showLoginPanel();
 
-    void showBattery(Optional<Integer> battery);
+    void addCreditsOf(Optional<Float> credits);
 
-    void showEBikeId(Optional<String> eBikeId);
+    void hireEBike(Optional<Float> credits, Optional<String> eBikeId);
 
     void stopEBike(Optional<Float> credits);
-
-    void showLowBatteryMessage(boolean eBikeHasLowBattery);
-
-    void showHasCreditsMessage(boolean hasCredits);
 
 
     class ViewPortImpl implements ViewPort {
@@ -39,13 +39,18 @@ public interface ViewPort {
         }
 
         @Override
-        public void showCredits(final Optional<Float> credits) {
-            credits.ifPresent(this.view::setCredits);
+        public void showLowBatteryMessage() {
+            this.showMessage(Optional.of(Message.Error.EBIKE_LOW_BATTERY));
         }
 
         @Override
-        public void hireEBike() {
-            this.view.hireEBike();
+        public void showHasCreditsMessage() {
+            this.showMessage(Optional.of(Message.Error.ZERO_CREDITS));
+        }
+
+        @Override
+        public void showCredits(final Optional<Float> credits) {
+            credits.ifPresent(this.view::setCredits);
         }
 
         @Override
@@ -64,9 +69,21 @@ public interface ViewPort {
             battery.ifPresent(this.view::setBattery);
         }
 
-        @Override
-        public void showEBikeId(final Optional<String> eBikeId) {
+        private void showEBikeId(final Optional<String> eBikeId) {
             eBikeId.ifPresent(this.view::setEBikeId);
+        }
+
+        @Override
+        public void addCreditsOf(final Optional<Float> credits) {
+            this.showCredits(credits);
+            this.showMessage(Optional.of(Message.Info.CREDITS_ADDED));
+        }
+
+        @Override
+        public void hireEBike(final Optional<Float> credits, final Optional<String> eBikeId) {
+            this.showCredits(credits);
+            this.showEBikeId(eBikeId);
+            this.view.hireEBike();
         }
 
         @Override
@@ -74,20 +91,6 @@ public interface ViewPort {
             this.showCredits(credits);
             this.showMessage(Optional.of(Message.Info.STOP_EBIKE));
             this.view.stopEBike();
-        }
-
-        @Override
-        public void showLowBatteryMessage(final boolean eBikeHasLowBattery) {
-            if (eBikeHasLowBattery) {
-                this.showMessage(Optional.of(Message.Error.EBIKE_LOW_BATTERY));
-            }
-        }
-
-        @Override
-        public void showHasCreditsMessage(final boolean hasCredits) {
-            if (!hasCredits) {
-                this.showMessage(Optional.of(Message.Error.ZERO_CREDITS));
-            }
         }
 
     }

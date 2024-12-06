@@ -77,7 +77,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean checkPasswordOf(final String username, final String password) {
+    public boolean authentication(final String username, final String password) {
         return this.users.stream()
                 .anyMatch(user -> user.username().equals(username) &&
                         user.password().equals(password));

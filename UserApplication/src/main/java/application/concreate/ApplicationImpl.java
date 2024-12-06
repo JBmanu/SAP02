@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApplicationImpl implements Application {
+    private final EBikeFactory eBikeFactory;
     private Optional<EBikeControllerPort> ebikeController;
     private Optional<RepositoryPort> repository;
     private Optional<ViewPort> view;
@@ -21,6 +22,8 @@ public class ApplicationImpl implements Application {
     private Optional<EBike> ebike;
 
     public ApplicationImpl() {
+        this.eBikeFactory = new EBikeFactory.SimpleFactory();
+
         this.ebikeController = Optional.empty();
         this.repository = Optional.empty();
         this.view = Optional.empty();
@@ -50,15 +53,14 @@ public class ApplicationImpl implements Application {
     }
 
     private void userLogged(final Optional<Message> error, final String username, final String password) {
-        if (this.repository.isEmpty() || error.isPresent()) return;
+        if (error.isPresent()) return;
         final UserFactory userFactory = new UserFactory.SimpleFactory();
         this.user = Optional.of(userFactory.createWithoutCredit(username, password));
     }
 
     @Override
     public Optional<Message> signUp(final String username, final String password) {
-        final Optional<Message> error = this.repository.isPresent() ?
-                this.repository.get().signUp(username, password) : Optional.empty();
+        final Optional<Message> error = this.repository.flatMap(repo -> repo.signUp(username, password));
         this.userLogged(error, username, password);
         error.ifPresentOrElse(msg -> this.view.ifPresent(view -> view.showMessage(Optional.of(msg))),
                 () -> this.view.ifPresent(view -> view.showHirePanel(username, this.creditsOfUser())));
@@ -67,8 +69,7 @@ public class ApplicationImpl implements Application {
 
     @Override
     public Optional<Message> signIn(final String username, final String password) {
-        final Optional<Message> error = this.repository.isPresent() ?
-                this.repository.get().signIn(username, password) : Optional.empty();
+        final Optional<Message> error = this.repository.flatMap(repo -> repo.signIn(username, password));
         this.userLogged(error, username, password);
         error.ifPresentOrElse(msg -> this.view.ifPresent(view -> view.showMessage(Optional.of(msg))),
                 () -> this.view.ifPresent(view -> view.showHirePanel(username, this.creditsOfUser())));
@@ -77,22 +78,19 @@ public class ApplicationImpl implements Application {
 
     @Override
     public Optional<Message> addCreditsOf(final float someCredits) {
-        final Optional<Message> error = this.user.isPresent() && this.repository.isPresent() ?
-                this.repository.get().addCreditsTo(this.user.get().username(), someCredits) : Optional.empty();
+        final Optional<Message> error = this.user
+                .flatMap(user -> this.repository.map(repo -> repo.addCreditsTo(user.username(), someCredits)))
+                .orElse(Optional.empty());
         error.ifPresentOrElse(
                 message -> this.view.ifPresent(view -> view.showMessage(error)),
-                () -> {
-                    this.view.ifPresent(view -> view.showCredits(this.creditsOfUser()));
-                    this.view.ifPresent(view ->view.showMessage(Optional.of(Message.Info.CREDITS_ADDED)));
-                });
+                () -> this.view.ifPresent(view -> view.addCreditsOf(this.creditsOfUser())));
         return error;
     }
 
     @Override
     public Optional<Float> creditsOfUser() {
         return this.user
-                .flatMap(userLogged -> this.repository.map(repository ->
-                        repository.creditsOf(userLogged.username())))
+                .flatMap(userLogged -> this.repository.map(repository -> repository.creditsOf(userLogged.username())))
                 .orElse(Optional.empty());
     }
 
@@ -112,23 +110,17 @@ public class ApplicationImpl implements Application {
         this.view.ifPresent(ViewPort::showLoginPanel);
     }
 
-
     @Override
     public Optional<Message> hireEBike(final String eBikeId) {
-        final Optional<Message> error = this.repository.isPresent() && this.user.isPresent() ?
-                this.repository.get().hireEBike(this.user.get().username(), eBikeId, CREDITS_FOR_HIRE) :
-                Optional.of(Message.Error.NOT_CONNECTED);
+        final Optional<Message> error = this.user
+                .flatMap(user -> this.repository.map(repo -> repo.hireEBike(user.username(), eBikeId, CREDITS_FOR_HIRE)))
+                .orElse(Optional.of(Message.Error.NOT_CONNECTED));
         this.view.ifPresent(view -> view.showMessage(error));
 
         if (error.isEmpty()) {
-            final EBikeFactory eBikeFactory = new EBikeFactory.SimpleFactory();
-            this.ebike = Optional.of(eBikeFactory.create(eBikeId));
+            this.ebike = Optional.of(this.eBikeFactory.create(eBikeId));
             this.ebikeController.ifPresent(EBikeControllerPort::rideEBike);
-            this.view.ifPresent(view -> {
-                view.showCredits(this.creditsOfUser());
-                view.showEBikeId(this.eBikeId());
-                view.hireEBike();
-            });
+            this.view.ifPresent(view -> view.hireEBike(this.creditsOfUser(), this.eBikeId()));
         }
         return error;
     }
@@ -164,14 +156,14 @@ public class ApplicationImpl implements Application {
     @Override
     public boolean eBikesHasLowBattery() {
         final boolean eBikeHasLowBattery = this.ebike.map(ebike -> this.isLowBatteryEBike(ebike.id())).orElse(false);
-        this.view.ifPresent(view -> view.showLowBatteryMessage(eBikeHasLowBattery));
+        if (eBikeHasLowBattery) this.view.ifPresent(ViewPort::showLowBatteryMessage);
         return eBikeHasLowBattery;
     }
 
     @Override
     public boolean userHasCredits() {
         final boolean hasCredits = this.creditsOfUser().map(credits -> credits >= CREDITS_FOR_RIDE).orElse(false);
-        this.view.ifPresent(view -> view.showHasCreditsMessage(hasCredits));
+        if (!hasCredits) this.view.ifPresent(ViewPort::showHasCreditsMessage);
         return hasCredits;
     }
 

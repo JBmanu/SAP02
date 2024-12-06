@@ -16,7 +16,7 @@ public interface Message {
         ADD_ZERO_CREDITS,
 
         EBIKE_IN_USE,
-        EBIKE_LOW_BATTERY,
+        EBIKE_LOW_BATTERY, NO_EBIKES,
     }
 
     enum Info implements Message {

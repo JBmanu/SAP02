@@ -12,6 +12,7 @@ public interface EBikeRepository {
     boolean add();
     boolean remove(String id);
     boolean contains(String id);
+    boolean hasEBike();
 
     boolean hireEBike(String id);
     boolean updateEBikePosition(String id, Point2D position);
@@ -31,4 +32,5 @@ public interface EBikeRepository {
     Optional<Point2D> positionOf(String id);
 
     Optional<EBikeState> stateOf(String id);
+
 }
