@@ -1,9 +1,9 @@
 package entity;
 
-import entity.user.concreate.UserRepositoryImpl;
+import framework.repository.UserRepositoryImpl;
 import entity.user.User;
 import entity.user.UserFactory;
-import entity.user.UserRepository;
+import adapter.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

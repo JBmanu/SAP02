@@ -1,10 +1,10 @@
 package application;
 
 import application.concreate.ApplicationImpl;
-import entity.ebike.EBikeRepository;
-import entity.ebike.concreate.EBikeRepositoryImpl;
-import entity.user.UserRepository;
-import entity.user.concreate.UserRepositoryImpl;
+import adapter.EBikeRepository;
+import framework.repository.EBikeRepositoryImpl;
+import adapter.UserRepository;
+import framework.repository.UserRepositoryImpl;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

@@ -19,8 +19,6 @@ public final class Launcher {
         final Gson gson = new Gson();
 
         repository.add("manuel", "1234");
-        repository.add("marco", "1234");
-        repository.add("mario", "1234");
 
 
         // GET
@@ -33,13 +31,6 @@ public final class Launcher {
             final String userId = ctx.pathParam("username");
             final Optional<User> user = repository.userOf(userId);
             final String json = user.map(gson::toJson).orElse("");
-            ctx.json(json);
-        });
-
-        app.get(USERS_ROOT + "/credits/{username}", ctx -> {
-            final String userId = ctx.pathParam("username");
-            final Optional<Float> credits = repository.creditsOf(userId);
-            final String json = credits.map(gson::toJson).orElse("");
             ctx.json(json);
         });
 
@@ -56,13 +47,27 @@ public final class Launcher {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String username = bodyJson.get("username");
             final String password = bodyJson.get("password");
+            System.out.println("username: " + username + " password: " + password);
             final boolean authenticated = repository.authentication(username, password);
             ctx.json(authenticated);
         });
 
+        app.post(USERS_ROOT + "/contains", ctx -> {
+            final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
+            final String username = bodyJson.get("username");
+            final boolean contains = repository.contains(username);
+            ctx.json(contains);
+        });
 
-        // PUT
-        app.put(USERS_ROOT + "/addCredits", ctx -> {
+        app.post(USERS_ROOT + "/credits", ctx -> {
+            final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
+            final String userId = bodyJson.get("username");
+            final Optional<Float> credits = repository.creditsOf(userId);
+            final String json = credits.map(gson::toJson).orElse("");
+            ctx.json(json);
+        });
+
+        app.post(USERS_ROOT + "/addCredits", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String username = bodyJson.get("username");
             final String amountStr = bodyJson.get("amount");
@@ -71,7 +76,7 @@ public final class Launcher {
             ctx.json(added);
         });
 
-        app.put(USERS_ROOT + "/withdrawCredits", ctx -> {
+        app.post(USERS_ROOT + "/withdrawCredits", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String username = bodyJson.get("username");
             final String amountStr = bodyJson.get("amount");

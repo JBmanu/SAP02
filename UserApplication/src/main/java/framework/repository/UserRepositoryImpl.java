@@ -1,8 +1,8 @@
-package entity.user.concreate;
+package framework.repository;
 
 import entity.user.User;
 import entity.user.UserFactory;
-import entity.user.UserRepository;
+import adapter.UserRepository;
 
 import java.util.HashSet;
 import java.util.Optional;

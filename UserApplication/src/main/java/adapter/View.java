@@ -1,6 +1,8 @@
 package adapter;
 
 
+import adapter.port.ViewEventPort;
+
 public interface View {
     void setEventPort(ViewEventPort eventPort);
 

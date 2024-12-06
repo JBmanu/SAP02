@@ -1,7 +1,5 @@
 package entity.user;
 
-import entity.user.concreate.UserImpl;
-
 public interface UserFactory {
     User createTest();
     User createWithoutCredit(String username, String password);

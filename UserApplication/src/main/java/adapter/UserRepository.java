@@ -1,4 +1,6 @@
-package entity.user;
+package adapter;
+
+import entity.user.User;
 
 import java.util.Optional;
 

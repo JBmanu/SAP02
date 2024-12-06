@@ -1,4 +1,4 @@
-package adapter;
+package adapter.port;
 
 import application.Application;
 

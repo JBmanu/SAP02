@@ -1,8 +1,8 @@
-package entity.ebike.concreate;
+package framework.repository;
 
 import entity.ebike.EBike;
 import entity.ebike.EBikeFactory;
-import entity.ebike.EBikeRepository;
+import adapter.EBikeRepository;
 import entity.ebike.EBikeState;
 
 import java.awt.geom.Point2D;

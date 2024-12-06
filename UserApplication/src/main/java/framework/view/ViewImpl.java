@@ -1,6 +1,6 @@
 package framework.view;
 
-import adapter.ViewEventPort;
+import adapter.port.ViewEventPort;
 import adapter.View;
 
 import javax.swing.*;

@@ -1,6 +1,4 @@
-package entity.user.concreate;
-
-import entity.user.User;
+package entity.user;
 
 public class UserImpl implements User {
 

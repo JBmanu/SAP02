@@ -1,10 +1,10 @@
 package application;
 
-import entity.ebike.EBikeRepository;
+import adapter.EBikeRepository;
 import entity.ebike.EBikeState;
-import entity.ebike.concreate.EBikeRepositoryImpl;
-import entity.user.UserRepository;
-import entity.user.concreate.UserRepositoryImpl;
+import framework.repository.EBikeRepositoryImpl;
+import adapter.UserRepository;
+import framework.repository.UserRepositoryImpl;
 
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -28,7 +28,7 @@ public interface RepositoryPort {
 
     void stopEBike(String id);
 
-    void withdrawCredits(String username, float someCredits);
+    boolean withdrawCredits(String username, float someCredits);
 
     void consumeBattery(String id, int consumeBattery);
 
@@ -123,8 +123,8 @@ public interface RepositoryPort {
         }
 
         @Override
-        public void withdrawCredits(final String username, final float someCredits) {
-            this.userRepository.withdrawCredits(username, someCredits);
+        public boolean withdrawCredits(final String username, final float someCredits) {
+            return this.userRepository.withdrawCredits(username, someCredits);
         }
 
         @Override

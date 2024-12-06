@@ -1,7 +1,5 @@
 package entity.ebike;
 
-import entity.ebike.concreate.EBikeImpl;
-
 public interface EBikeFactory {
     EBike createDefault();
 

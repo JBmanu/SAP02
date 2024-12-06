@@ -1,4 +1,6 @@
-package entity.ebike;
+package adapter;
+
+import entity.ebike.EBikeState;
 
 import java.awt.geom.Point2D;
 import java.util.List;

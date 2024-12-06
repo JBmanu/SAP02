@@ -1,6 +1,7 @@
 package application;
 
 import application.concreate.ApplicationImpl;
+import application.concreate.RepositoryClientPort;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,7 +17,7 @@ public class SignUp {
 
     @Given("The user is not registered")
     public void theUserIsNotRegistered() {
-        final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
+        final RepositoryPort repositoryPort = new RepositoryClientPort();
         this.application = new ApplicationImpl();
         this.application.setRepository(repositoryPort);
     }

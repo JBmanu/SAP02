@@ -1,8 +1,4 @@
-package entity.ebike.concreate;
-
-import entity.ebike.EBike;
-import entity.ebike.EBikeState;
-import entity.ebike.V2d;
+package entity.ebike;
 
 import java.awt.geom.Point2D;
 

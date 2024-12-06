@@ -1,6 +1,6 @@
 package application;
 
-import adapter.RideEventPort;
+import adapter.port.RideEventPort;
 import utils.ThreadUtils;
 
 import java.util.Optional;
