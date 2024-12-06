@@ -28,12 +28,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean add(final User user) {
-        return this.users.add(user);
+        return !this.contains(user.username()) && this.users.add(user);
     }
 
     @Override
     public boolean add(final String username, final String password) {
-        return this.users.add(this.userFactory.createWithoutCredit(username, password));
+        return this.add(this.userFactory.createWithoutCredit(username, password));
     }
 
     @Override

@@ -3,14 +3,14 @@ package concreate;
 import domain.User;
 
 public class UserImpl implements User {
-    private record DataUser(String username, String password, float credits) { }
+    private record UserCredential(String username, String password) { }
 
     private static final int INIT_CREDITS = 0;
-    private final DataUser dataUser;
+    private final UserCredential userCredential;
     private float credits;
 
     public UserImpl(final String username, final String password, final float credits) {
-        this.dataUser = new DataUser(username, password, credits);
+        this.userCredential = new UserCredential(username, password);
         this.credits = credits;
     }
 
@@ -20,12 +20,12 @@ public class UserImpl implements User {
 
     @Override
     public String username() {
-        return this.dataUser.username();
+        return this.userCredential.username();
     }
 
     @Override
     public String password() {
-        return this.dataUser.password();
+        return this.userCredential.password();
     }
 
     @Override
@@ -55,6 +55,6 @@ public class UserImpl implements User {
 
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof final User user && this.dataUser.username().equals(user.username());
+        return obj instanceof final User user && this.userCredential.username().equals(user.username());
     }
 }
