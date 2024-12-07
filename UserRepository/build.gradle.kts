@@ -1,14 +1,27 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
-    id("java")
+    java
+    application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.example"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass.set("Launcher")
+}
 dependencies {
     implementation("io.javalin:javalin:6.3.0")
     implementation("org.slf4j:slf4j-simple:2.0.16")
@@ -23,4 +36,17 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+
+
+tasks.withType<ShadowJar>() {
+
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName = "userRepository"
+        archiveClassifier = ""
+        archiveVersion = ""
+    }
 }

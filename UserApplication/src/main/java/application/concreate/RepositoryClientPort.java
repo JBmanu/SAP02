@@ -37,6 +37,7 @@ public class RepositoryClientPort implements RepositoryPort {
     public RepositoryClientPort(final EBikeRepository eBikeRepository) {
         this.ebikeRepository = eBikeRepository;
         this.gson = new Gson();
+        System.out.println(this.getRequest(USERS_PATH, List.class));
     }
 
     private <T> Optional<T> getRequest(final String urlPath, final Class<T> responseType) {
