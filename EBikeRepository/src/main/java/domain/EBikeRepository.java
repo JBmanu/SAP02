@@ -1,10 +1,12 @@
 package domain;
 
 import java.awt.geom.Point2D;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 public interface EBikeRepository {
+    HashSet<EBike> eBikes();
     List<String> eBikesIdFree();
 
     int count();
@@ -17,15 +19,15 @@ public interface EBikeRepository {
     boolean hireEBike(String id);
     boolean updateEBikePosition(String id, Point2D position);
     boolean stopEBike(String id);
-    boolean rechargeEBikeBattery(String id, float amount);
+    boolean rechargeEBikeBattery(String id, int amount);
 
     boolean isFree(String eBikeId);
     boolean isInUse(String eBikeId);
     boolean isLowBattery(String eBikeId);
 
-    void setLowBattery(String eBikeId);
+    boolean setLowBattery(String eBikeId);
 
-    void consumeBattery(String id, int consumeBattery);
+    boolean consumeBattery(String id, int consumeBattery);
 
     Optional<Integer> batteryOf(String id);
 

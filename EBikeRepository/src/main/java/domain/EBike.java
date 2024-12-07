@@ -8,6 +8,9 @@ public interface EBike {
     int battery();
     Point2D position();
 
+    void recharge(int amount);
+    void consumeBattery(int consumeBattery);
+
     boolean hire();
     void updatePosition(Point2D position);
     void stopRide();
@@ -18,5 +21,5 @@ public interface EBike {
 
     void setLowBattery();
 
-    void consumeBattery(int consumeBattery);
+
 }

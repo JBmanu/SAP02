@@ -44,7 +44,7 @@ tasks.withType<ShadowJar>() {
 
 tasks {
     shadowJar {
-        archiveBaseName = "EBikeRepository"
+        archiveBaseName = "eBikeRepository"
         archiveClassifier = ""
         archiveVersion = ""
     }

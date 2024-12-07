@@ -25,6 +25,11 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
+    public HashSet<EBike> eBikes() {
+        return this.ebikes;
+    }
+
+    @Override
     public int count() {
         return this.ebikes.size();
     }
@@ -75,8 +80,11 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
-    public boolean rechargeEBikeBattery(final String id, final float amount) {
-        return false;
+    public boolean rechargeEBikeBattery(final String id, final int amount) {
+        this.ebikes.stream().filter(ebike -> ebike.id().equals(id))
+                .findFirst()
+                .ifPresent(ebike -> ebike.recharge(amount));
+        return this.contains(id);
     }
 
     @Override
@@ -107,17 +115,19 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
-    public void setLowBattery(final String eBikeId) {
+    public boolean setLowBattery(final String eBikeId) {
         this.ebikes.stream()
                 .filter(ebike -> ebike.id().equals(eBikeId))
                 .forEach(EBike::setLowBattery);
+        return this.contains(eBikeId);
     }
 
     @Override
-    public void consumeBattery(final String id, final int consumeBattery) {
+    public boolean consumeBattery(final String id, final int consumeBattery) {
         this.ebikes.stream()
                 .filter(ebike -> ebike.id().equals(id))
                 .forEach(ebike -> ebike.consumeBattery(consumeBattery));
+        return this.contains(id);
     }
 
     @Override

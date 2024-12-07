@@ -47,7 +47,6 @@ public final class Launcher {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String username = bodyJson.get("username");
             final String password = bodyJson.get("password");
-            System.out.println("username: " + username + " password: " + password);
             final boolean authenticated = repository.authentication(username, password);
             ctx.json(authenticated);
         });

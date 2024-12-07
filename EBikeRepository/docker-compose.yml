@@ -1,0 +1,12 @@
+services:
+  app:
+    image: eclipse-temurin:21-jdk
+    container_name: EBike-Repository # Nome del container
+    ports:
+      - "3002:3002"       # Mappa la porta 3000 del container alla porta 3000 dell'host
+    volumes:
+      - ./build/libs:/app  # Monta la cartella con il file JAR dentro il container
+    working_dir: /app      # Imposta la cartella di lavoro dove si trova il JAR
+    command: ["java", "-jar", "eBikeRepository.jar"]  # Comando per eseguire il JAR
+    environment:
+      - SERVER_PORT=3002   # Variabile di ambiente per la porta

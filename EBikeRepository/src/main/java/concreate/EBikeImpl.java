@@ -45,6 +45,13 @@ public class EBikeImpl implements EBike {
     }
 
     @Override
+    public void recharge(final int amount) {
+        this.battery += amount;
+        if (this.battery >= MAX_LEVEL_BATTERY)
+            this.battery = MAX_LEVEL_BATTERY;
+    }
+
+    @Override
     public void updatePosition(final Point2D position) {
         this.position = position;
     }

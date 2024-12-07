@@ -14,9 +14,23 @@ services:
     environment:
       - SERVER_PORT=3001
 
+  ebikeRepository:
+    image: eclipse-temurin:21-jdk
+    container_name: EBikeRepository
+    volumes:
+      - ./EBikeRepository/build/libs:/app
+    working_dir: /app
+    command: [ "java", "-jar", "eBikeRepository.jar" ]
+    ports:
+      - "3002:3002"
+    networks:
+      - custom-network
+    environment:
+      - SERVER_PORT=3002
+
   GatewayRepository:
     image: eclipse-temurin:21-jdk
-    container_name: Gateway-Repository
+    container_name: GatewayRepository
     volumes:
       - ./GatewayRepository/build/libs:/app
     working_dir: /app
