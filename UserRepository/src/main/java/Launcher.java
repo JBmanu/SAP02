@@ -27,6 +27,7 @@ public final class Launcher {
             ctx.json(json);
         });
 
+        // Only test
         app.get(USERS_ROOT + "/{username}", ctx -> {
             final String userId = ctx.pathParam("username");
             final Optional<User> user = repository.userOf(userId);

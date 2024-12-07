@@ -1,48 +1,43 @@
 import io.javalin.Javalin;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import java.io.IOException;
 
 public class Launcher {
+    public static final int PORT = 3000;
+    public static final String ROOT = "http://localhost:";
+    public static final String USERS_ROOT = ROOT + "3001";
+    public static final String EBIKE_ROOT = ROOT + "3002";
+
 
     public static void main(String[] args) {
-        // Crea un'app Javalin
-        Javalin app = Javalin.create().start(3000);
-        // Configura il routing per l'API Gateway
-        // Proxy per la rotta /users/
-        // Proxy per la rotta /users che inoltra le richieste al servizio sulla porta 3001
-        app.get("/users", ctx -> {
-            System.out.println("proxy: " + ctx.req().getRequestURI());
-            String backendUrl = "http://localhost:3001/users";
-            String response = proxyRequest(backendUrl);
+        final RequestManager requestManager = new RequestManager();
+        final Javalin app = Javalin.create().start(PORT);
+
+        // Proxy per la rotta /users che inoltra le richieste get al servizio sulla porta 3001
+        app.get("/users*", ctx -> {
+            final String backendUrl = USERS_ROOT + ctx.path();
+            final String response = requestManager.send(backendUrl);
             ctx.result(response);
         });
 
-        // Proxy per la rotta /bike che inoltra le richieste al servizio sulla porta 3002
-        app.get("/bike/*", ctx -> {
-            String backendUrl = "http://localhost:3002/ebikes" + ctx.req().getRequestURI();
-            String response = proxyRequest(backendUrl);
+        // Proxy per la rotta /users che inoltra le richieste post al servizio sulla porta 3001
+        app.post("/users*", ctx -> {
+            final String backendUrl = USERS_ROOT + ctx.path();
+            final String response = requestManager.send(backendUrl, ctx.body());
             ctx.result(response);
-        });   }
+        });
 
-    // Funzione di proxy per inoltrare le richieste
-    public static String proxyRequest(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        // Proxy per la rotta /ebike che inoltra le richieste get al servizio sulla porta 3002
+        app.get("/ebike*", ctx -> {
+            final String backendUrl = EBIKE_ROOT + ctx.path();
+            final String response = requestManager.send(backendUrl);
+            ctx.result(response);
+        });
 
-        // Crea una richiesta HTTP GET
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        // Proxy per la rotta /ebike che inoltra le richieste post al servizio sulla porta 3002
+        app.post("/ebike*", ctx -> {
+            final String backendUrl = EBIKE_ROOT + ctx.path();
+            final String response = requestManager.send(backendUrl, ctx.body());
+            ctx.result(response);
+        });
 
-        // Esegui la richiesta e ottieni la risposta
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-            // Restituisci il corpo della risposta come stringa
-            return response.body().string();
-        }
     }
 }
