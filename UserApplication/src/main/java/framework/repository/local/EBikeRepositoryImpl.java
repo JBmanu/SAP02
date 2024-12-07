@@ -1,4 +1,4 @@
-package framework.repository;
+package framework.repository.local;
 
 import entity.ebike.EBike;
 import entity.ebike.EBikeFactory;

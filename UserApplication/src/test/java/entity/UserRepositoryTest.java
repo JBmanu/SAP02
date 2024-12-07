@@ -1,6 +1,6 @@
 package entity;
 
-import framework.repository.UserRepositoryImpl;
+import framework.repository.local.UserRepositoryImpl;
 import entity.user.User;
 import entity.user.UserFactory;
 import adapter.UserRepository;

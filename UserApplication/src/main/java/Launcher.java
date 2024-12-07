@@ -5,8 +5,8 @@ import application.EBikeControllerPort;
 import application.ViewPort;
 import application.concreate.ApplicationImpl;
 import adapter.EBikeRepository;
-import application.concreate.RepositoryClientPort;
-import framework.repository.EBikeRepositoryImpl;
+import framework.repository.remote.RepositoryClientPort;
+import framework.repository.local.EBikeRepositoryImpl;
 import framework.view.ViewImpl;
 
 public final class Launcher {

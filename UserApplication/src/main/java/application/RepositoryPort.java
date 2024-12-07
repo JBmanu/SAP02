@@ -2,9 +2,9 @@ package application;
 
 import adapter.EBikeRepository;
 import entity.ebike.EBikeState;
-import framework.repository.EBikeRepositoryImpl;
+import framework.repository.local.EBikeRepositoryImpl;
 import adapter.UserRepository;
-import framework.repository.UserRepositoryImpl;
+import framework.repository.local.UserRepositoryImpl;
 
 import java.awt.geom.Point2D;
 import java.util.List;

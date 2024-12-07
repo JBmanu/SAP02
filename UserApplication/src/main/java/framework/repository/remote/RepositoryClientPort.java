@@ -1,11 +1,11 @@
-package application.concreate;
+package framework.repository.remote;
 
 import adapter.EBikeRepository;
 import application.Message;
 import application.RepositoryPort;
 import com.google.gson.Gson;
 import entity.ebike.EBikeState;
-import framework.repository.EBikeRepositoryImpl;
+import framework.repository.local.EBikeRepositoryImpl;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.geom.Point2D;
@@ -13,22 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RepositoryClientPort implements RepositoryPort {
-    private static final String PORT = "3000";
-    private static final String URL_ROOT = "http://localhost:" + PORT;
-    public static final String USERS_PATH = "/users";
-    public static final String SIGN_UP_PATH = USERS_PATH + "/signUp";
-    public static final String SIGN_IN_PATH = USERS_PATH + "/signIn";
-    public static final String ADD_CREDITS_PATH = USERS_PATH + "/addCredits";
-    public static final String CREDITS_PATH = USERS_PATH + "/credits";
-    public static final String WITHDRAW_CREDITS_PATH = USERS_PATH + "/withdrawCredits";
-    public static final String CONTAINS_PATH = USERS_PATH + "/contains";
-    public static final String USERNAME_KEY = "username";
-    public static final String PASSWORD_KEY = "password";
-    public static final String AMOUNT_KEY = "amount";
+import static framework.repository.remote.Key.*;
+import static framework.repository.remote.Root.*;
 
+public class RepositoryClientPort implements RepositoryPort {
     private final EBikeRepository ebikeRepository;
-    private final Gson gson;
+    private final RequestManager requestManager;
 
     public RepositoryClientPort() {
         this(new EBikeRepositoryImpl());
@@ -36,19 +26,10 @@ public class RepositoryClientPort implements RepositoryPort {
 
     public RepositoryClientPort(final EBikeRepository eBikeRepository) {
         this.ebikeRepository = eBikeRepository;
-        this.gson = new Gson();
+        this.requestManager = new RequestManager();
     }
 
-    private <T> Optional<T> postRequest(final String urlPath, final Class<T> responseType, final Map<String, String> request) {
-        final RestTemplate restTemplate = new RestTemplate();
-        Optional<T> response = Optional.empty();
-        final String message = this.gson.toJson(request);
-        try {
-            response = Optional.ofNullable(restTemplate.postForObject(URL_ROOT + urlPath, message, responseType));
-        } catch (final Exception ignored) {
-        }
-        return response;
-    }
+
 
     @Override
     public List<String> eBikesIdFree() {
@@ -57,7 +38,7 @@ public class RepositoryClientPort implements RepositoryPort {
 
     @Override
     public boolean contain(final String username) {
-        return this.postRequest(CONTAINS_PATH,
+        return this.requestManager.sendPost(CONTAINS_PATH,
                 Boolean.class, Map.of(USERNAME_KEY, username)).orElse(false);
     }
 
@@ -65,7 +46,7 @@ public class RepositoryClientPort implements RepositoryPort {
     public Optional<Message> signUp(final String username, final String password) {
         if (username.isBlank() || password.isBlank()) return Optional.of(Message.Error.EMPTY_FIELD);
 
-        final Optional<Boolean> response = this.postRequest(SIGN_UP_PATH, Boolean.class,
+        final Optional<Boolean> response = this.requestManager.sendPost(SIGN_UP_PATH, Boolean.class,
                 Map.of(USERNAME_KEY, username, PASSWORD_KEY, password));
 
         return (Optional<Message>) response.map(res ->
@@ -77,7 +58,7 @@ public class RepositoryClientPort implements RepositoryPort {
     public Optional<Message> signIn(final String username, final String password) {
         if (username.isBlank() || password.isBlank()) return Optional.of(Message.Error.EMPTY_FIELD);
         if (!this.contain(username)) return Optional.of(Message.Error.NOT_REGISTERED);
-        final Optional<Boolean> response = this.postRequest(SIGN_IN_PATH, Boolean.class,
+        final Optional<Boolean> response = this.requestManager.sendPost(SIGN_IN_PATH, Boolean.class,
                 Map.of(USERNAME_KEY, username, PASSWORD_KEY, password));
 
         return (Optional<Message>) response.map(res -> res ? Optional.empty() : Optional.of(Message.Error.SAME_USERNAME))
@@ -89,7 +70,7 @@ public class RepositoryClientPort implements RepositoryPort {
         if (someCredits < 0) return Optional.of(Message.Error.ADD_NEGATIVE_CREDITS);
         if (someCredits == 0) return Optional.of(Message.Error.ADD_ZERO_CREDITS);
 
-        final Optional<Boolean> response = this.postRequest(ADD_CREDITS_PATH, Boolean.class,
+        final Optional<Boolean> response = this.requestManager.sendPost(ADD_CREDITS_PATH, Boolean.class,
                 Map.of(USERNAME_KEY, username, AMOUNT_KEY, someCredits + ""));
 
         return (Optional<Message>) response.map(res -> res ? Optional.empty() : Optional.of(Message.Error.NOT_LOGGED))
@@ -98,7 +79,7 @@ public class RepositoryClientPort implements RepositoryPort {
 
     @Override
     public Optional<Float> creditsOf(final String username) {
-        return this.postRequest(CREDITS_PATH, Float.class, Map.of(USERNAME_KEY, username));
+        return this.requestManager.sendPost(CREDITS_PATH, Float.class, Map.of(USERNAME_KEY, username));
     }
 
     @Override
@@ -134,7 +115,7 @@ public class RepositoryClientPort implements RepositoryPort {
 
     @Override
     public boolean withdrawCredits(final String username, final float someCredits) {
-        return this.postRequest(WITHDRAW_CREDITS_PATH, Boolean.class,
+        return this.requestManager.sendPost(WITHDRAW_CREDITS_PATH, Boolean.class,
                         Map.of(USERNAME_KEY, username, AMOUNT_KEY, someCredits + ""))
                 .orElse(false);
     }

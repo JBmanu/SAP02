@@ -2,9 +2,9 @@ package application;
 
 import application.concreate.ApplicationImpl;
 import adapter.EBikeRepository;
-import framework.repository.EBikeRepositoryImpl;
+import framework.repository.local.EBikeRepositoryImpl;
 import adapter.UserRepository;
-import framework.repository.UserRepositoryImpl;
+import framework.repository.local.UserRepositoryImpl;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

@@ -1,7 +1,7 @@
 package application;
 
 import application.concreate.ApplicationImpl;
-import application.concreate.RepositoryClientPort;
+import framework.repository.remote.RepositoryClientPort;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
