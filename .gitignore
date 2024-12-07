@@ -11,6 +11,13 @@
 .mtj.tmp/
 
 # Package Files #
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 *.jar
 *.war
 *.nar

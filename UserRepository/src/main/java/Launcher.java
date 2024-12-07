@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 public final class Launcher {
-    public static final int PORT = 3000;
+    public static final int PORT = 3001;
     public static final String USERS_ROOT = "/users";
 
     public static void main(final String[] args) {

@@ -3,10 +3,10 @@ services:
     image: eclipse-temurin:21-jdk
     container_name: User-Repository # Nome del container
     ports:
-      - "3000:3000"       # Mappa la porta 3000 del container alla porta 3000 dell'host
+      - "3001:3001"       # Mappa la porta 3000 del container alla porta 3000 dell'host
     volumes:
       - ./build/libs:/app  # Monta la cartella con il file JAR dentro il container
     working_dir: /app      # Imposta la cartella di lavoro dove si trova il JAR
     command: ["java", "-jar", "userRepository.jar"]  # Comando per eseguire il JAR
     environment:
-      - SERVER_PORT=3000   # Variabile di ambiente per la porta
+      - SERVER_PORT=3001   # Variabile di ambiente per la porta
