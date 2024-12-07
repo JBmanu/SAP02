@@ -37,17 +37,6 @@ public class RepositoryClientPort implements RepositoryPort {
     public RepositoryClientPort(final EBikeRepository eBikeRepository) {
         this.ebikeRepository = eBikeRepository;
         this.gson = new Gson();
-        System.out.println(this.getRequest(USERS_PATH, List.class));
-    }
-
-    private <T> Optional<T> getRequest(final String urlPath, final Class<T> responseType) {
-        final RestTemplate restTemplate = new RestTemplate();
-        Optional<T> response = Optional.empty();
-        try {
-            response = Optional.ofNullable(restTemplate.getForObject(URL_ROOT + urlPath, responseType));
-        } catch (final Exception ignored) {
-        }
-        return response;
     }
 
     private <T> Optional<T> postRequest(final String urlPath, final Class<T> responseType, final Map<String, String> request) {
@@ -59,15 +48,6 @@ public class RepositoryClientPort implements RepositoryPort {
         } catch (final Exception ignored) {
         }
         return response;
-    }
-
-    private void putRequest(final String urlPath, final Map<String, String> request) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final String message = this.gson.toJson(request);
-        try {
-            restTemplate.put(urlPath, request, message);
-        } catch (final Exception ignored) {
-        }
     }
 
     @Override
