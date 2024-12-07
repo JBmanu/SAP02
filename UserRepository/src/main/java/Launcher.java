@@ -20,7 +20,6 @@ public final class Launcher {
 
         repository.add("manuel", "1234");
 
-
         // GET
         app.get(USERS_ROOT, ctx -> {
             final String json = gson.toJson(repository.users().stream().toList());

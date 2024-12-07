@@ -1,14 +1,16 @@
+import com.google.gson.Gson;
 import okhttp3.*;
 
 import java.io.IOException;
 
 public final class RequestManager {
     private final OkHttpClient client;
+    private final Gson gson;
 
     public RequestManager() {
         this.client = new OkHttpClient();
+        this.gson = new Gson();
     }
-
 
     private Request createGETRequest(final String url) {
         return new Request.Builder()
@@ -28,7 +30,7 @@ public final class RequestManager {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-            return response.body().string();
+            return this.gson.toJson(response.body().string());
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
