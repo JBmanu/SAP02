@@ -1,7 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     java
     application
@@ -46,7 +44,7 @@ tasks.withType<ShadowJar>() {
 
 tasks {
     shadowJar {
-        archiveBaseName = "sudoku"
+        archiveBaseName = "EBikeRepository"
         archiveClassifier = ""
         archiveVersion = ""
     }

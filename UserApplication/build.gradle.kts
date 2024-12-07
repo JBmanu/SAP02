@@ -1,14 +1,23 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
-    id("java")
+    java
+    application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.example"
-version = "unspecified"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 dependencies {
     testImplementation("io.cucumber:cucumber-java:7.20.1")
     testImplementation("io.cucumber:cucumber-junit:7.20.1")
@@ -23,4 +32,16 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<ShadowJar>() {
+
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName = "UserApplication"
+        archiveClassifier = ""
+        archiveVersion = ""
+    }
 }
