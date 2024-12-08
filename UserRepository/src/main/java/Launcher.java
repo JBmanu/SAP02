@@ -17,6 +17,11 @@ public final class Launcher {
     public static final int PORT = 3001;
     public static final String USERS_ROOT = "/users";
 
+    // KEY NAMES
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String AMOUNT = "amount";
+
     public static void main(final String[] args) {
         final MetricsService metricsService = new MetricsService();
         final UserRepository repository = new UserRepositoryImpl();
@@ -32,7 +37,7 @@ public final class Launcher {
 
         // Only test
         app.get(USERS_ROOT + "/{username}", ctx -> {
-            final String userId = ctx.pathParam("username");
+            final String userId = ctx.pathParam(USERNAME);
             final Optional<User> user = repository.userOf(userId);
             final String json = user.map(gson::toJson).orElse("");
             ctx.json(json);
@@ -41,8 +46,8 @@ public final class Launcher {
         // POST
         app.post(USERS_ROOT + "/signUp", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String username = bodyJson.get("username");
-            final String password = bodyJson.get("password");
+            final String username = bodyJson.get(USERNAME);
+            final String password = bodyJson.get(PASSWORD);
             final boolean added = repository.add(username, password);
             metricsService.registerUser(username, added);
             ctx.json(added);
@@ -50,8 +55,8 @@ public final class Launcher {
 
         app.post(USERS_ROOT + "/signIn", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String username = bodyJson.get("username");
-            final String password = bodyJson.get("password");
+            final String username = bodyJson.get(USERNAME);
+            final String password = bodyJson.get(PASSWORD);
             final boolean authenticated = repository.authentication(username, password);
             metricsService.loginUser(username, authenticated);
             ctx.json(authenticated);
@@ -59,14 +64,14 @@ public final class Launcher {
 
         app.post(USERS_ROOT + "/contains", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String username = bodyJson.get("username");
+            final String username = bodyJson.get(USERNAME);
             final boolean contains = repository.contains(username);
             ctx.json(contains);
         });
 
         app.post(USERS_ROOT + "/credits", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String userId = bodyJson.get("username");
+            final String userId = bodyJson.get(USERNAME);
             final Optional<Float> credits = repository.creditsOf(userId);
             final String json = credits.map(gson::toJson).orElse("");
             ctx.json(json);
@@ -74,8 +79,8 @@ public final class Launcher {
 
         app.post(USERS_ROOT + "/addCredits", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String username = bodyJson.get("username");
-            final String amountStr = bodyJson.get("amount");
+            final String username = bodyJson.get(USERNAME);
+            final String amountStr = bodyJson.get(AMOUNT);
             final float amount = Float.parseFloat(Objects.requireNonNull(amountStr));
             final boolean added = repository.addCreditsTo(username, amount);
             metricsService.addCredits(username, amount, added);
@@ -84,8 +89,8 @@ public final class Launcher {
 
         app.post(USERS_ROOT + "/withdrawCredits", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String username = bodyJson.get("username");
-            final String amountStr = bodyJson.get("amount");
+            final String username = bodyJson.get(USERNAME);
+            final String amountStr = bodyJson.get(AMOUNT);
             final float amount = Float.parseFloat(Objects.requireNonNull(amountStr));
             final boolean withdrawn = repository.withdrawCredits(username, amount);
             metricsService.removeCredits(username, amount, withdrawn);
