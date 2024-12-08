@@ -4,6 +4,9 @@ import adapter.EBikeRepository;
 import application.Message;
 import application.RepositoryPort;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import entity.ebike.EBikeState;
 import framework.repository.local.EBikeRepositoryImpl;
 import org.springframework.web.client.RestTemplate;
@@ -30,10 +33,14 @@ public class RepositoryClientPort implements RepositoryPort {
     }
 
 
-
     @Override
     public List<String> eBikesIdFree() {
-        return this.ebikeRepository.eBikesIdFree();
+        // parto da qui devo capire come convertire questo messaggio
+        // o direttamente come passarlo
+        TypeToken<List<String>> listTypeToken = new TypeToken<List<String>>() {};
+        final Optional<List<String>> eBikesIdFree = this.requestManager.sendGet(EBIKES_ID_FREE, listTypeToken);
+        System.out.println(eBikesIdFree);
+        return List.of();
     }
 
     @Override

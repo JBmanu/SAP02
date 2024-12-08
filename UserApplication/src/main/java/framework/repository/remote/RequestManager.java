@@ -1,12 +1,13 @@
 package framework.repository.remote;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static framework.repository.remote.Root.URL_ROOT;
 
 public class RequestManager {
     private final Gson gson;
@@ -15,11 +16,19 @@ public class RequestManager {
         this.gson = new Gson();
     }
 
-    public <T> Optional<T> sendPost(final String urlPath, final Class<T> responseType) {
+    public <T> Optional<T> sendGet(final String urlPath, final TypeToken<T> typeToken) {
         final RestTemplate restTemplate = new RestTemplate();
         Optional<T> response = Optional.empty();
         try {
-            response = Optional.ofNullable(restTemplate.getForObject(URL_ROOT + urlPath, responseType));
+            final String json = restTemplate.getForObject(urlPath, String.class);
+            final Type type = typeToken.getType();
+
+
+            System.out.println(gson.fromJson(json, type).toString());
+
+            final T object = this.gson.fromJson(json,typeToken);
+            System.out.println(object);
+            response = Optional.ofNullable(object);
         } catch (final Exception ignored) {
         }
         return response;
@@ -30,7 +39,7 @@ public class RequestManager {
         Optional<T> response = Optional.empty();
         final String message = this.gson.toJson(request);
         try {
-            response = Optional.ofNullable(restTemplate.postForObject(URL_ROOT + urlPath, message, responseType));
+            response = Optional.ofNullable(restTemplate.postForObject(urlPath, message, responseType));
         } catch (final Exception ignored) {
         }
         return response;
