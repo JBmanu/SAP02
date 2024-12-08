@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.ImmutableRegistration;
 import concreate.UserRepositoryImpl;
 import domain.User;
 import domain.UserRepository;
@@ -6,7 +8,6 @@ import io.javalin.Javalin;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 import metrics.MetricsService;
-
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Objects;
@@ -23,11 +24,25 @@ public final class Launcher {
 
     public static void main(final String[] args) {
         Config.loadConfig();
-
+        final int port = Config.port();
         final MetricsService metricsService = new MetricsService();
         final UserRepository repository = new UserRepositoryImpl();
-        final Javalin app = Javalin.create().start(Config.port());
+        final Javalin app = Javalin.create().start(port);
         final Gson gson = new Gson();
+
+        final Consul consul = Consul.builder().build();
+        final String serviceId = "user-service";
+        consul.agentClient().register(ImmutableRegistration.builder()
+                .id(serviceId)
+                .name("user-service")
+                .address("localhost")
+                .port(port)
+//                .check(AgentService.Check.http("http://localhost:7000/health", 10L))
+                .build());
+
+        app.get("/health", ctx -> {
+            ctx.result("OK");
+        });
 
         // Load default users
         Config.loadDefaultUsers().forEach(user -> {
