@@ -11,6 +11,8 @@ public interface EBikeRepository {
 
     int count();
 
+    String lastId();
+
     boolean add();
     boolean remove(String id);
     boolean contains(String id);

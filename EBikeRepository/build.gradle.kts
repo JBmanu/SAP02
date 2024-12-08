@@ -30,6 +30,11 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
+    // Prometheus
+    implementation("io.prometheus:simpleclient_bom:0.16.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.16.0")
+    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.14.1")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

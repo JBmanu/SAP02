@@ -13,10 +13,12 @@ import java.util.Optional;
 public class EBikeRepositoryImpl implements EBikeRepository {
     private final EBikeFactory ebikeFactory;
     private final HashSet<EBike> ebikes;
+    private String lastId;
 
     public EBikeRepositoryImpl() {
         this.ebikes = new HashSet<>();
         this.ebikeFactory = new EBikeFactory.SimpleFactory();
+        this.lastId = "";
     }
 
     @Override
@@ -35,8 +37,15 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
+    public String lastId() {
+        return this.lastId;
+    }
+
+    @Override
     public boolean add() {
-        return this.ebikes.add(this.ebikeFactory.createDefault());
+        final EBike eBike = this.ebikeFactory.createDefault();
+        this.lastId = eBike.id();
+        return this.ebikes.add(eBike);
     }
 
     @Override

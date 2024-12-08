@@ -3,8 +3,12 @@ import concreate.EBikeRepositoryImpl;
 import domain.EBikeRepository;
 import domain.EBikeState;
 import io.javalin.Javalin;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.exporter.common.TextFormat;
+import metrics.MetricsService;
 
 import java.awt.geom.Point2D;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,10 +21,12 @@ public class Launcher {
     private static final String CONSUME_BATTERY = "consumeBattery";
 
     public static void main(final String[] args) {
+        final MetricsService metricsService = new MetricsService();
         final EBikeRepository repository = new EBikeRepositoryImpl();
         final Javalin app = Javalin.create().start(PORT);
         final Gson gson = new Gson();
 
+        // cambiare in richiesta POST
         for (int i = 0; i < 10; i++) repository.add();
 
         // GET
@@ -41,7 +47,9 @@ public class Launcher {
 
         // POST
         app.post(EBIKE_ROOT + "/create", ctx -> {
-            ctx.json(repository.add());
+            final boolean add = repository.add();
+            metricsService.registerBike(repository.lastId(), add);
+            ctx.json(add);
         });
 
         app.post(EBIKE_ROOT + "/contains", ctx -> {
@@ -53,13 +61,17 @@ public class Launcher {
         app.post(EBIKE_ROOT + "/hire", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String id = bodyJson.get(ID);
-            ctx.json(repository.hireEBike(id));
+            final boolean hireEBike = repository.hireEBike(id);
+            metricsService.updateBikeState(id, repository.stateOf(id), hireEBike);
+            ctx.json(hireEBike);
         });
 
         app.post(EBIKE_ROOT + "/stop", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String id = bodyJson.get(ID);
-            ctx.json(repository.stopEBike(id));
+            final boolean stopEBike = repository.stopEBike(id);
+            metricsService.updateBikeState(id, repository.stateOf(id), stopEBike);
+            ctx.json(stopEBike);
         });
 
         app.post(EBIKE_ROOT + "/rechargeBattery", ctx -> {
@@ -67,7 +79,19 @@ public class Launcher {
             final String id = bodyJson.get(ID);
             final String rechargeStr = bodyJson.get(RECHARGE);
             final int recharge = Integer.parseInt(Objects.requireNonNull(rechargeStr));
-            ctx.json(repository.rechargeEBikeBattery(id, recharge));
+            final boolean recharged = repository.rechargeEBikeBattery(id, recharge);
+            metricsService.updateBatteryLevel(id, repository.batteryOf(id), recharged);
+            ctx.json(recharged);
+        });
+
+        app.post(EBIKE_ROOT + "/consumeBattery", ctx -> {
+            final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
+            final String id = bodyJson.get(ID);
+            final String consumeBatteryStr = bodyJson.get(CONSUME_BATTERY);
+            final int consumeBattery = Integer.parseInt(Objects.requireNonNull(consumeBatteryStr));
+            final boolean consumed = repository.consumeBattery(id, consumeBattery);
+            metricsService.updateBatteryLevel(id, repository.batteryOf(id), consumed);
+            ctx.json(consumed);
         });
 
         app.post(EBIKE_ROOT + "/isFree", ctx -> {
@@ -112,13 +136,13 @@ public class Launcher {
             ctx.json(json);
         });
 
-        app.post(EBIKE_ROOT + "/consumeBattery", ctx -> {
-            final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
-            final String id = bodyJson.get(ID);
-            final String consumeBatteryStr = bodyJson.get(CONSUME_BATTERY);
-            final int consumeBattery = Integer.parseInt(Objects.requireNonNull(consumeBatteryStr));
-            ctx.json(repository.consumeBattery(id, consumeBattery));
+        // METRICS
+        app.get("/metrics", ctx -> {
+            final StringWriter writer = new StringWriter();
+            TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
+            ctx.result(writer.toString());
         });
+
 
 
     }
