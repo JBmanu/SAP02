@@ -23,19 +23,9 @@ application {
     mainClass.set("Launcher")
 }
 
-
 dependencies {
-    // Javalin per costruire l'API Gateway
-    implementation("io.javalin:javalin:6.3.0")
-    implementation("org.slf4j:slf4j-simple:2.0.16")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-
-    // OkHttp per fare richieste HTTP come proxy
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
-    implementation("com.google.code.gson:gson:2.11.0")
-
-    // Kotlin standard library
-    implementation(kotlin("stdlib"))
+    implementation("io.prometheus:simpleclient_bom:0.16.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.16.0")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -51,7 +41,7 @@ tasks.withType<ShadowJar>() {
 
 tasks {
     shadowJar {
-        archiveBaseName = "gatewayRepository"
+        archiveBaseName = "metrics"
         archiveClassifier = ""
         archiveVersion = ""
     }
