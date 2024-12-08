@@ -1,5 +1,4 @@
 services:
-
   userRepository:
     image: eclipse-temurin:21-jdk
     container_name: UserRepository
@@ -41,6 +40,18 @@ services:
       - custom-network
     environment:
       - SERVER_PORT=3000
+
+  prometheus:
+    image: prom/prometheus:latest  # Usa l'immagine ufficiale di Prometheus
+    container_name: Prometheus
+    ports:
+      - "9090:9090"  # Porta per l'interfaccia web di Prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Monta il file di configurazione
+    networks:
+      - custom-network
+    environment:
+      - SERVER_PORT=9090
 
 networks:
   custom-network:
