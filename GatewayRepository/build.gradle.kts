@@ -31,11 +31,12 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 
     // OkHttp per fare richieste HTTP come proxy
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
     implementation("com.google.code.gson:gson:2.11.0")
+//    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
 
     // Consul
     implementation("com.orbitz.consul:consul-client:1.5.3")
+
 
     // Kotlin standard library
     implementation(kotlin("stdlib"))

@@ -35,7 +35,7 @@ public final class Launcher {
         consul.agentClient().register(ImmutableRegistration.builder()
                 .id(serviceId)
                 .name("user-service")
-                .address("localhost")
+                .address("UserRepository")
                 .port(port)
 //                .check(AgentService.Check.http("http://localhost:7000/health", 10L))
                 .build());
