@@ -41,5 +41,12 @@ public class Launcher {
             ctx.json(response);
         });
 
+        // METRICS
+        app.get("/metrics", ctx -> {
+            final String metrics = requestManager.send(USERS_ROOT + "/metrics") +
+                    requestManager.send(EBIKE_ROOT + "/metrics");
+            ctx.result(metrics);
+        });
+
     }
 }

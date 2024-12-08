@@ -28,6 +28,7 @@ public final class Launcher {
         final Javalin app = Javalin.create().start(PORT);
         final Gson gson = new Gson();
 
+        // cambiare in richiesta POST
         repository.add("manuel", "1234");
 
         app.get(USERS_ROOT, ctx -> {
