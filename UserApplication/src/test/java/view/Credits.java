@@ -1,9 +1,13 @@
 package view;
 
+import adapter.EBikeRepository;
+import adapter.UserRepository;
 import application.Application;
 import application.EBikeControllerPort;
 import application.RepositoryPort;
 import application.concreate.ApplicationImpl;
+import framework.repository.local.EBikeRepositoryImpl;
+import framework.repository.local.UserRepositoryImpl;
 import utils.ThreadUtils;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -21,7 +25,10 @@ public class Credits {
 
     @Given("The user has sign in")
     public void theUserHasSignIn() {
-        final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl();
+        final UserRepository userRepository = new UserRepositoryImpl();
+        final EBikeRepository eBikeRepository = new EBikeRepositoryImpl();
+        final RepositoryPort repositoryPort = new RepositoryPort.RepositoryPortImpl(userRepository, eBikeRepository);
+        eBikeRepository.add();
         this.application = new ApplicationImpl();
         this.application.setRepository(repositoryPort);
         this.application.setEBikeController(new EBikeControllerPort.EBikeControllerPortImpl());
@@ -38,6 +45,7 @@ public class Credits {
     public void theSystemShowsTheCredit() {
         assertEquals(SOME_CREDITS, this.application.creditsOfUser().get());
     }
+
 
     @When("The user pay the unlock hire service")
     public void theUserPayTheUnlockHireService() {

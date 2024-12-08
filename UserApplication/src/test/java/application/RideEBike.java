@@ -9,6 +9,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import utils.ThreadUtils;
 
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,9 +68,7 @@ public class RideEBike {
     }
     @Then("The system stops the ride, notify the user and free the e-bike with id {string}")
     public void theSystemStopsTheRideNotifyTheUserAndFreeTheEBike(final String eBikeId) {
-        try {
-            sleep(1000);
-        } catch (final InterruptedException ignored) { }
+        ThreadUtils.sleep(2000);
         assertFalse(this.application.hasHireEBike());
         assertTrue(this.application.isFreeEBike(eBikeId));
     }
@@ -82,9 +81,7 @@ public class RideEBike {
     }
     @Then("The system stops the ride, notify the user and low battery the e-bike {string}")
     public void theSystemStopsTheRideNotifyTheUserAndLowBatteryTheEBike(final String eBikeId) {
-        try {
-            sleep(1000);
-        } catch (final InterruptedException ignored) { }
+        ThreadUtils.sleep(2000);
         assertFalse(this.application.hasHireEBike());
         assertTrue(this.application.isLowBatteryEBike(eBikeId));
     }
