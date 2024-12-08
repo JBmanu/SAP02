@@ -14,20 +14,23 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Launcher {
-    public static final int PORT = 3002;
     public static final String EBIKE_ROOT = "/ebikes";
     public static final String ID = "id";
     public static final String RECHARGE = "recharge";
     private static final String CONSUME_BATTERY = "consumeBattery";
 
     public static void main(final String[] args) {
+        Config.loadConfig();
+
         final MetricsService metricsService = new MetricsService();
         final EBikeRepository repository = new EBikeRepositoryImpl();
-        final Javalin app = Javalin.create().start(PORT);
+        final Javalin app = Javalin.create().start(Config.port());
         final Gson gson = new Gson();
 
-        // cambiare in richiesta POST
-        for (int i = 0; i < 10; i++) repository.add();
+        for (int i = 0; i < Config.loadDefaultEBikes(); i++) {
+            final boolean add = repository.add();
+            metricsService.registerBike(repository.lastId(), add);
+        }
 
         // GET
         app.get(EBIKE_ROOT, ctx -> {
