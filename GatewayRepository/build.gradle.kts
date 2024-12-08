@@ -34,6 +34,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
     implementation("com.google.code.gson:gson:2.11.0")
 
+    // Consul
+    implementation("com.orbitz.consul:consul-client:2.1.3")
+
     // Kotlin standard library
     implementation(kotlin("stdlib"))
 

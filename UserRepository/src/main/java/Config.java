@@ -26,7 +26,9 @@ public final class Config {
     public static List<User> loadDefaultUsers() {
         final UserFactory factory = new UserFactory.SimpleFactory();
         final List<User> users = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
+
+        final int nUsers = Integer.parseInt(config.getProperty("users.count", "3"));
+        for (int i = 1; i <= nUsers; i++) {
             final String username = config.getProperty("user" + i + ".username");
             final String password = config.getProperty("user" + i + ".password");
             final float credits = Float.parseFloat(config.getProperty("user" + i + ".credits"));

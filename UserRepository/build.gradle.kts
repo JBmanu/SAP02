@@ -36,6 +36,9 @@ dependencies {
     // GSON
     implementation("com.google.code.gson:gson:2.11.0")
 
+    // Consul
+    implementation("com.orbitz.consul:consul-client:1.5.3")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
