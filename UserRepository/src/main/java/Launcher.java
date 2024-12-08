@@ -30,17 +30,20 @@ public final class Launcher {
         final Javalin app = Javalin.create().start(port);
         final Gson gson = new Gson();
 
-        final Consul consul = Consul.builder().build();
+        final Consul consul = Consul.builder()
+                .withUrl("http://Consul:8500")
+                .build();
         final String serviceId = "user-service";
         consul.agentClient().register(ImmutableRegistration.builder()
                 .id(serviceId)
-                .name("user-service")
+                .name(serviceId)
                 .address("UserRepository")
                 .port(port)
-//                .check(AgentService.Check.http("http://localhost:7000/health", 10L))
                 .build());
 
+        // Health check
         app.get("/health", ctx -> {
+            System.out.println("Health check");
             ctx.result("OK");
         });
 

@@ -1,25 +1,53 @@
 services:
-  userRepository:
+  Consul:
+    image: hashicorp/consul:1.15.3
+    container_name: Consul
+    command: "agent -dev -client=0.0.0.0"
+    ports:
+      - "8500:8500" # Porta HTTP di Consul
+      - "8600:8600/udp" # Porta DNS
+    networks:
+      - custom-network
+    environment:
+      - SERVER_PORT=8500
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8500/v1/status/leader" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+  UserRepository:
     image: eclipse-temurin:21-jdk
     container_name: UserRepository
     volumes:
       - ./UserRepository/build/libs:/app
     working_dir: /app
     command: [ "java", "-jar", "userRepository.jar" ]
+    depends_on:
+      - Consul
     ports:
       - "3001:3001"
     networks:
       - custom-network
     environment:
       - SERVER_PORT=3001
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
-  ebikeRepository:
+  EBikeRepository:
     image: eclipse-temurin:21-jdk
     container_name: EBikeRepository
     volumes:
       - ./EBikeRepository/build/libs:/app
     working_dir: /app
     command: [ "java", "-jar", "eBikeRepository.jar" ]
+    depends_on:
+      - Consul
     ports:
       - "3002:3002"
     networks:
@@ -33,21 +61,32 @@ services:
     volumes:
       - ./GatewayRepository/build/libs:/app
     working_dir: /app
-    command: [ "java", "-jar", "gatewayRepository.jar" ]
+#    command: [ "sleep", "5", "&&", "java", "-jar", "gatewayRepository.jar" ]
+    command: /bin/sh -c "sleep 3 && java -jar gatewayRepository.jar"
+    depends_on:
+      - Consul
+      - UserRepository
+      - EBikeRepository
     ports:
       - "3000:3000"
     networks:
       - custom-network
     environment:
       - SERVER_PORT=3000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
-  prometheus:
-    image: prom/prometheus:latest  # Usa l'immagine ufficiale di Prometheus
+  Prometheus:
+    image: prom/prometheus:latest
     container_name: Prometheus
     ports:
-      - "9090:9090"  # Porta per l'interfaccia web di Prometheus
+      - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Monta il file di configurazione
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - custom-network
     environment:

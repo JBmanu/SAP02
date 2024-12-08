@@ -3,6 +3,7 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import io.javalin.Javalin;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Launcher {
     public static final int PORT = 3000;
@@ -14,15 +15,18 @@ public class Launcher {
     public static void main(String[] args) {
         final RequestManager requestManager = new RequestManager();
         final Javalin app = Javalin.create().start(PORT);
-        final Consul consul = Consul.builder().build();
+
+        // create consul in port 3300 to get the user-service
+        final Consul consul = Consul.builder()
+                .withUrl("http://Consul:8500")
+                .build();
 
         final List<CatalogService> serviceList = consul.catalogClient().getService("user-service").getResponse();
+        final Optional<CatalogService> firstService = serviceList.stream().findFirst();
 
-        final String userUrl = serviceList.stream().findFirst()
-                .map(service -> "http://" + service.getAddress() + ":" + service.getServicePort()).orElse("");
+        final String userUrl = firstService
+                .map(service -> "http://" + service.getServiceAddress() + ":" + service.getServicePort()).orElse("");
 
-
-        // Proxy per la rotta /users che inoltra le richieste get al servizio sulla porta 3001
         app.get("/users*", ctx -> {
             final String backendUrl = userUrl + ctx.path();
             final String response = requestManager.send(backendUrl);
@@ -55,6 +59,13 @@ public class Launcher {
             final String metrics = requestManager.send(userUrl + "/metrics") +
                     requestManager.send(EBIKE_ROOT + "/metrics");
             ctx.result(metrics);
+        });
+
+
+        // Health check
+        app.get("/health", ctx -> {
+            System.out.println("Health check");
+            ctx.result("OK");
         });
 
     }
