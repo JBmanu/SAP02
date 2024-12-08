@@ -14,7 +14,6 @@ import java.util.Optional;
 
 
 public final class Launcher {
-    public static final int PORT = 3001;
     public static final String USERS_ROOT = "/users";
 
     // KEY NAMES
@@ -23,14 +22,20 @@ public final class Launcher {
     public static final String AMOUNT = "amount";
 
     public static void main(final String[] args) {
+        Config.loadConfig();
+
         final MetricsService metricsService = new MetricsService();
         final UserRepository repository = new UserRepositoryImpl();
-        final Javalin app = Javalin.create().start(PORT);
+        final Javalin app = Javalin.create().start(Config.port());
         final Gson gson = new Gson();
 
-        // cambiare in richiesta POST
-        repository.add("manuel", "1234");
+        // Load default users
+        Config.loadDefaultUsers().forEach(user -> {
+            final boolean added = repository.add(user);
+            metricsService.registerUser(user.username(), added);
+        });
 
+        // GET
         app.get(USERS_ROOT, ctx -> {
             final String json = gson.toJson(repository.users().stream().toList());
             ctx.json(json);
