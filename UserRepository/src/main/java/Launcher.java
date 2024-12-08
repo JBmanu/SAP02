@@ -3,7 +3,11 @@ import concreate.UserRepositoryImpl;
 import domain.User;
 import domain.UserRepository;
 import io.javalin.Javalin;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.exporter.common.TextFormat;
+import metrics.MetricsService;
 
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,13 +18,13 @@ public final class Launcher {
     public static final String USERS_ROOT = "/users";
 
     public static void main(final String[] args) {
+        final MetricsService metricsService = new MetricsService();
         final UserRepository repository = new UserRepositoryImpl();
         final Javalin app = Javalin.create().start(PORT);
         final Gson gson = new Gson();
 
         repository.add("manuel", "1234");
 
-        // GET
         app.get(USERS_ROOT, ctx -> {
             final String json = gson.toJson(repository.users().stream().toList());
             ctx.json(json);
@@ -40,6 +44,7 @@ public final class Launcher {
             final String username = bodyJson.get("username");
             final String password = bodyJson.get("password");
             final boolean added = repository.add(username, password);
+            metricsService.registerUser(username, added);
             ctx.json(added);
         });
 
@@ -48,6 +53,7 @@ public final class Launcher {
             final String username = bodyJson.get("username");
             final String password = bodyJson.get("password");
             final boolean authenticated = repository.authentication(username, password);
+            metricsService.loginUser(username, authenticated);
             ctx.json(authenticated);
         });
 
@@ -72,6 +78,7 @@ public final class Launcher {
             final String amountStr = bodyJson.get("amount");
             final float amount = Float.parseFloat(Objects.requireNonNull(amountStr));
             final boolean added = repository.addCreditsTo(username, amount);
+            metricsService.addCredits(username, amount, added);
             ctx.json(added);
         });
 
@@ -81,7 +88,16 @@ public final class Launcher {
             final String amountStr = bodyJson.get("amount");
             final float amount = Float.parseFloat(Objects.requireNonNull(amountStr));
             final boolean withdrawn = repository.withdrawCredits(username, amount);
+            metricsService.removeCredits(username, amount, withdrawn);
             ctx.json(withdrawn);
         });
+
+        // METRICS
+        app.get("/metrics", ctx -> {
+            final StringWriter writer = new StringWriter();
+            TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
+            ctx.result(writer.toString());
+        });
+
     }
 }

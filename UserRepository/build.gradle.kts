@@ -23,10 +23,17 @@ application {
     mainClass.set("Launcher")
 }
 dependencies {
+    // Javalin
     implementation("io.javalin:javalin:6.3.0")
     implementation("org.slf4j:slf4j-simple:2.0.16")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 
+    // Prometheus
+    implementation("io.prometheus:simpleclient_bom:0.16.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.16.0")
+    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.14.1")
+
+    // GSON
     implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

@@ -1,36 +1,64 @@
-import io.prometheus.client.Histogram;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.exporter.common.TextFormat;
 import io.prometheus.client.exporter.HTTPServer;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Launcher {
 
-    public static final int PORT = 3003;
+    private static final CollectorRegistry registry = new CollectorRegistry();
 
-    public static void main(final String[] args) {
-        // Avvia il server Prometheus
-        try {
-            HTTPServer server = new HTTPServer(PORT); // Le metriche saranno disponibili su http://localhost:1234/metrics
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static void main(String[] args) throws IOException {
+        // Start HTTP server to expose metrics on /metrics
+        HTTPServer server = new HTTPServer.Builder()
+                .withPort(3003)
+                .withRegistry(registry)// Porta del microservizio centrale
+                .build();
 
-        // Simula una logica per generare metriche
-        simulateRequests();
+        // Timer per raccogliere periodicamente le metriche dagli altri microservizi
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                collectMetrics();
+            }
+        }, 0, 10000); // Ogni 30 secondi
     }
 
-    private static void simulateRequests() {
-        for (int i = 0; i < 10; i++) {
-            // Avvia un timer per la latenza
-            Metrics.requestCounter.inc(); // Incrementa il contatore
-            final Histogram.Timer timer = Metrics.requestLatency.startTimer();
+    private static void collectMetrics() {
+        // URL degli altri microservizi da cui raccogliere le metriche
+        String[] serviceUrls = {
+                "http://localhost:3001/metrics"
+                // Aggiungi altri endpoint se necessario
+        };
+
+        for (String url : serviceUrls) {
             try {
-                // Simula una logica (ad esempio una richiesta lenta)
-                Thread.sleep((long) (Math.random() * 1000));
-            } catch (final InterruptedException e) {
+                // Effettua una richiesta HTTP agli endpoint /metrics degli altri microservizi
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestMethod("GET");
+
+                if (connection.getResponseCode() == 200) {
+                    try (Scanner scanner = new Scanner(connection.getInputStream())) {
+                        while (scanner.hasNextLine()) {
+                            String line = scanner.nextLine();
+                            // Qui puoi analizzare o trasformare i dati, oppure lasciarli invariati
+                            System.out.println("Raccolta metrica: " + line);
+                        }
+                    }
+                } else {
+                    System.err.println("Errore nello scraping: " + url);
+                }
+
+            } catch (IOException e) {
+                System.err.println("Errore durante la raccolta delle metriche da: " + url);
                 e.printStackTrace();
-            } finally {
-                timer.observeDuration(); // Registra la durata della richiesta
             }
         }
     }
