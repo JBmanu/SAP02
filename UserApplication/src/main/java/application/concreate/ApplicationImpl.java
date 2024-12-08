@@ -96,7 +96,7 @@ public class ApplicationImpl implements Application {
 
     @Override
     public boolean isRegistered(final String username) {
-        return this.repository.isPresent() && this.repository.get().contain(username);
+        return this.repository.isPresent() && this.repository.get().containUser(username);
     }
 
     @Override

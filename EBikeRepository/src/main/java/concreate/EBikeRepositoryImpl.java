@@ -50,7 +50,7 @@ public class EBikeRepositoryImpl implements EBikeRepository {
     }
 
     @Override
-    public boolean hasEBike() {
+    public boolean hasEBikes() {
         return !this.ebikes.isEmpty();
     }
 

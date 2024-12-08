@@ -14,6 +14,7 @@ public class Launcher {
     public static final String EBIKE_ROOT = "/ebikes";
     public static final String ID = "id";
     public static final String RECHARGE = "recharge";
+    private static final String CONSUME_BATTERY = "consumeBattery";
 
     public static void main(final String[] args) {
         final EBikeRepository repository = new EBikeRepositoryImpl();
@@ -34,8 +35,8 @@ public class Launcher {
             ctx.json(json);
         });
 
-        app.get(EBIKE_ROOT + "/hasEBike", ctx -> {
-            ctx.json(repository.hasEBike());
+        app.get(EBIKE_ROOT + "/hasEBikes", ctx -> {
+            ctx.json(repository.hasEBikes());
         });
 
         // POST
@@ -84,7 +85,7 @@ public class Launcher {
         app.post(EBIKE_ROOT + "/isLowBattery", ctx -> {
             final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
             final String id = bodyJson.get(ID);
-            ctx.json(repository.isInUse(id));
+            ctx.json(repository.isLowBattery(id));
         });
 
         app.post(EBIKE_ROOT + "/battery", ctx -> {
@@ -109,6 +110,14 @@ public class Launcher {
             final Optional<EBikeState> state = repository.stateOf(id);
             final String json = state.map(gson::toJson).orElse("");
             ctx.json(json);
+        });
+
+        app.post(EBIKE_ROOT + "/consumeBattery", ctx -> {
+            final Map<String, String> bodyJson = ctx.bodyAsClass(Map.class);
+            final String id = bodyJson.get(ID);
+            final String consumeBatteryStr = bodyJson.get(CONSUME_BATTERY);
+            final int consumeBattery = Integer.parseInt(Objects.requireNonNull(consumeBatteryStr));
+            ctx.json(repository.consumeBattery(id, consumeBattery));
         });
 
 
