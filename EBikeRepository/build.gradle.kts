@@ -30,6 +30,9 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
+    // Consul
+    implementation("com.orbitz.consul:consul-client:1.5.3")
+
     // Prometheus
     implementation("io.prometheus:simpleclient_bom:0.16.0")
     implementation("io.prometheus:simpleclient_httpserver:0.16.0")

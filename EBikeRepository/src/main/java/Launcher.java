@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.ImmutableRegistration;
 import concreate.EBikeRepositoryImpl;
 import domain.EBikeRepository;
 import domain.EBikeState;
@@ -22,10 +24,14 @@ public class Launcher {
     public static void main(final String[] args) {
         Config.loadConfig();
 
+        final int port = Config.port();
+        final RegisterService registerService = new RegisterService();
         final MetricsService metricsService = new MetricsService();
         final EBikeRepository repository = new EBikeRepositoryImpl();
-        final Javalin app = Javalin.create().start(Config.port());
+        final Javalin app = Javalin.create().start(port);
         final Gson gson = new Gson();
+
+        registerService.register(port);
 
         for (int i = 0; i < Config.loadDefaultEBikes(); i++) {
             final boolean add = repository.add();
@@ -146,6 +152,11 @@ public class Launcher {
             ctx.result(writer.toString());
         });
 
+        // Health check
+        app.get("/health", ctx -> {
+            System.out.println("Health check");
+            ctx.result("OK");
+        });
 
 
     }

@@ -25,27 +25,13 @@ public final class Launcher {
     public static void main(final String[] args) {
         Config.loadConfig();
         final int port = Config.port();
+        final RegisterService registerService = new RegisterService();
         final MetricsService metricsService = new MetricsService();
         final UserRepository repository = new UserRepositoryImpl();
         final Javalin app = Javalin.create().start(port);
         final Gson gson = new Gson();
 
-        final Consul consul = Consul.builder()
-                .withUrl("http://Consul:8500")
-                .build();
-        final String serviceId = "user-service";
-        consul.agentClient().register(ImmutableRegistration.builder()
-                .id(serviceId)
-                .name(serviceId)
-                .address("UserRepository")
-                .port(port)
-                .build());
-
-        // Health check
-        app.get("/health", ctx -> {
-            System.out.println("Health check");
-            ctx.result("OK");
-        });
+        registerService.register(port);
 
         // Load default users
         Config.loadDefaultUsers().forEach(user -> {
@@ -128,5 +114,10 @@ public final class Launcher {
             ctx.result(writer.toString());
         });
 
+        // Health check
+        app.get("/health", ctx -> {
+            System.out.println("Health check");
+            ctx.result("OK");
+        });
     }
 }
