@@ -5,11 +5,9 @@ import java.io.IOException;
 
 public final class RequestManager {
     private final OkHttpClient client;
-    private final Gson gson;
 
     public RequestManager() {
         this.client = new OkHttpClient();
-        this.gson = new Gson();
     }
 
     private Request createGETRequest(final String url) {
@@ -30,7 +28,7 @@ public final class RequestManager {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-            return this.gson.toJson(response.body().string());
+            return response.body().string();
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

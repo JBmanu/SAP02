@@ -32,15 +32,10 @@ public class RepositoryClientPort implements RepositoryPort {
         this.requestManager = new RequestManager();
     }
 
-
     @Override
     public List<String> eBikesIdFree() {
-        // parto da qui devo capire come convertire questo messaggio
-        // o direttamente come passarlo
-        TypeToken<List<String>> listTypeToken = new TypeToken<List<String>>() {};
-        final Optional<List<String>> eBikesIdFree = this.requestManager.sendGet(EBIKES_ID_FREE, listTypeToken);
-        System.out.println(eBikesIdFree);
-        return List.of();
+        final Optional<List<String>> eBikesIdFree = this.requestManager.sendGet(EBIKES_ID_FREE, new TypeToken<>() {});
+        return eBikesIdFree.orElse(List.of());
     }
 
     @Override

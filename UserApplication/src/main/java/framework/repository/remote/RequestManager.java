@@ -21,13 +21,7 @@ public class RequestManager {
         Optional<T> response = Optional.empty();
         try {
             final String json = restTemplate.getForObject(urlPath, String.class);
-            final Type type = typeToken.getType();
-
-
-            System.out.println(gson.fromJson(json, type).toString());
-
-            final T object = this.gson.fromJson(json,typeToken);
-            System.out.println(object);
+            final T object = this.gson.fromJson(json,typeToken.getType());
             response = Optional.ofNullable(object);
         } catch (final Exception ignored) {
         }
