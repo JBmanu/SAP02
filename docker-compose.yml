@@ -54,6 +54,12 @@ services:
       - custom-network
     environment:
       - SERVER_PORT=3002
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
   GatewayRepository:
     image: eclipse-temurin:21-jdk

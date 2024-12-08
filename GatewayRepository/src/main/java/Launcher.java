@@ -1,15 +1,17 @@
 import io.javalin.Javalin;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class Launcher {
     public static final int PORT = 3000;
 
 
     public static void main(String[] args) {
         final RequestManager requestManager = new RequestManager();
-        final Javalin app = Javalin.create().start(PORT);
         final ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
-        final String userUrl = serviceDiscovery.userUrl();
-        final String eBikeUrl = serviceDiscovery.eBikeUrl();
+        final Javalin app = Javalin.create().start(PORT);
+        final AtomicReference<String> userUrl = new AtomicReference<>(serviceDiscovery.userUrl());
+        final AtomicReference<String> eBikeUrl = new AtomicReference<>(serviceDiscovery.eBikeUrl());
 
         app.get("/users*", ctx -> {
             final String backendUrl = userUrl + ctx.path();
@@ -49,6 +51,8 @@ public class Launcher {
         // Health check
         app.get("/health", ctx -> {
             System.out.println("Health check");
+            userUrl.set(serviceDiscovery.userUrl());
+            eBikeUrl.set(serviceDiscovery.eBikeUrl());
             ctx.result("OK");
         });
 

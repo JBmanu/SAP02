@@ -18,6 +18,11 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+application {
+    mainClass.set("Launcher")
+}
+
 dependencies {
     testImplementation("io.cucumber:cucumber-java:7.20.1")
     testImplementation("io.cucumber:cucumber-junit:7.20.1")
