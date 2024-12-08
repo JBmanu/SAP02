@@ -20,11 +20,18 @@ public final class MetricsService {
     public static final String CREDITS_REMOVED_TOTAL = "credits_removed_total";
     public static final String TOTAL_USER_CREDITS = "total_user_credits";
 
+    // REQUEST METRICS
     private final Counter userRegistrations;
     private final Counter userLogins;
     private final Counter creditsAdded;
     private final Counter creditsRemoved;
     private final Gauge totalCredits;
+
+    // HEALTH METRICS
+    // per adesso non usati
+    private final Gauge healthStatus;
+    private final Counter errorCount;
+
 
     public MetricsService() {
          this.userRegistrations = Counter.build()
@@ -56,6 +63,17 @@ public final class MetricsService {
                 .help("Total number of credits across all users.")
                 .labelNames(USERNAME)  // Etichetta per l'utente
                 .register();
+
+        this.healthStatus = Gauge.build()
+                .name("health_status")
+                .help("Health status of the microservice.")
+                .register();
+
+        this.errorCount = Counter.build()
+                .name("http_errors_total")
+                .help("Total number of HTTP errors.")
+                .labelNames("status_code")
+                .register();
     }
 
     public void registerUser(final String username, final boolean isSuccess) {
@@ -78,6 +96,14 @@ public final class MetricsService {
         final String status = isSuccess ? SUCCESS : FAILURE;
         this.creditsRemoved.labels(username, Float.toString(amount), status).inc();
         this.totalCredits.labels(username).dec(amount);
+    }
+
+    public void setHealthStatus(final boolean isHealthy) {
+        this.healthStatus.set(isHealthy ? 1.0 : 0.0);
+    }
+
+    public void countError(final String statusCode) {
+        this.errorCount.labels(statusCode).inc();
     }
 
 }
