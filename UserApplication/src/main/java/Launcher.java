@@ -12,6 +12,7 @@ import framework.view.ViewImpl;
 public final class Launcher {
     public static void main(final String[] args) {
         final EBikeControllerPort ebikeControllerPort = new EBikeControllerPort.EBikeControllerPortImpl();
+
         final Application application = new ApplicationImpl();
         application.setRepository(new RepositoryClientPort());
         application.setEBikeController(ebikeControllerPort);
